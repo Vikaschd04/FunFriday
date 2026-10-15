@@ -1,7 +1,7 @@
 # Project Status
 
 **As of:** 2026-10-15
-**Current phase:** P1 - Premium Design -> **GO for P2** (pending first CI run of this commit). P2 not started.
+**Current phase:** P1 - Premium Design -> **GO for P2** (local + GitHub CI run 38773479161). P2 not started.
 **Build status:** All checks pass locally (249 unit, 16 integration, 135 E2E across Chromium/Firefox/WebKit). Code at github.com/Vikaschd04/FunFriday (`main`).
 
 ## What works now (try it: `docs/LOCAL_TESTING.md`)
@@ -33,7 +33,7 @@
 
 ## Last test evidence
 
-`docs/phases/P1_DESIGN_SYSTEM.md` -> Gate report (2026-10-15 22:24-22:27 IST, cache disabled). P0 evidence: `docs/phases/P0_FOUNDATION.md`; P0 GitHub CI run 38758446713 (17/17 steps).
+`docs/phases/P1_DESIGN_SYSTEM.md` -> Gate report (2026-10-15 22:24-22:27 IST, cache disabled). GitHub CI P1: run 38773479161 (18/18 steps, 3 browsers). P0 evidence: `docs/phases/P0_FOUNDATION.md`; P0 CI run 38758446713.
 
 ## Local environment notes
 

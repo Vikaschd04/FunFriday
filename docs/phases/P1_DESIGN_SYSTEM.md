@@ -49,7 +49,7 @@
 - [x] E2E (Chromium, Firefox, WebKit): journeys above + axe WCAG 2.2 AA zero serious/critical on every screen + 320px no horizontal scroll.
 - [x] Screenshots 320 / 768 / 1440 for each screen reviewed by the lead and `product-designer`.
 - [x] CSP + security headers present; CI actions pinned by SHA; Dependabot; `pnpm audit` gate.
-- [~] `pnpm lint/typecheck/test/build/test:integration/test:e2e` green locally; CI result recorded below after push.
+- [x] `pnpm lint/typecheck/test/build/test:integration/test:e2e` green locally and in GitHub CI ([run 38773479161](https://github.com/Vikaschd04/FunFriday/actions/runs/38773479161)).
 
 ## Risks
 
@@ -74,7 +74,7 @@
 | Visual review | PASS | 33 screenshots; lead + designer; Must-fix items fixed and re-shot | Nice-to-haves open |
 | Accessibility review | PASS (no blockers) | H1, M1-M4, L1-L3 fixed | Manual SR / 200% / forced colours NOT RUN |
 | Security review | PASS (no stop-ship) | drafts hardening, href guard, permissions, SHA verification done | Nonce CSP P2 |
-| GitHub CI | see below | recorded after push | - |
+| GitHub CI | PASS | [run 38773479161](https://github.com/Vikaschd04/FunFriday/actions/runs/38773479161) on `a9c26bf`: 18/18 steps in 4.4 min on ubuntu-latest - pinned v7/v6 actions, audit gate, 3-browser E2E, load smoke | - |
 
 ### Defects found and fixed during P1
 
@@ -95,4 +95,4 @@
 
 ### Gate decision
 
-**GO for P2 pending CI**: all mandatory local checks pass; no open critical/high defects; owner direction (local-first) respected - nothing deployed.
+**GO for P2.** All mandatory checks pass locally and in GitHub CI; no open critical/high defects; owner direction (local-first) respected - nothing deployed. P2 not started.
