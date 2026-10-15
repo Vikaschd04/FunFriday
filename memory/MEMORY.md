@@ -4,7 +4,7 @@ This is a small, **version-controlled** memory index for humans and Claude Code.
 
 - **Product north star:** Make voluntary cross-team connection easier for corporate remote/hybrid teams through low-pressure, delightful multiplayer activities; see `docs/PRODUCT_VISION.md`.
 - **Working product name:** FunFriday. Similar brand names exist; legal/trademark/domain availability unverified.
-- **Current phase:** P0 Foundation done locally -> GO for P1 pending owner review/commit. Working monorepo; no games/auth/realtime yet. See `memory/STATUS.md` and `docs/phases/P0_FOUNDATION.md`.
+- **Current phase:** P0 Foundation done -> GO for P1 (verified locally + GitHub CI). Working monorepo; no games/auth/realtime yet. See `memory/STATUS.md` and `docs/phases/P0_FOUNDATION.md`.
 - **Architecture baseline:** ADR 0001 accepted for P0 scope. Next 16 + NestJS 12 (ESM) + Prisma 7 (in `apps/api/prisma`) + Redis; pnpm 11/Turborepo; Zod contracts. Pinned versions in `docs/TECH_STACK.md`. Socket.IO arrives in P4.
 - **MVP:** Six real activities (This or That, Emoji Check-In, Trivia Rush, Who Am I, Caption Clash, Sketch & Guess), events/invites, lobby, host controls, playlists, feedback. See `docs/PRD.md`, `docs/GAMES.md`.
 - **Design:** premium, colorful corporate fun; approachable not childish; WCAG 2.2 AA; accessibility and reduced motion. See `docs/DESIGN_SYSTEM.md`.

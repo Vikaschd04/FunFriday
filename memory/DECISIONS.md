@@ -12,7 +12,7 @@
 | D006 | Scheduling | ICS + invite link MVP; integrations later | Provider choice for email when approved |
 | D007 | Brand | FunFriday provisional working name | Legal/trademark/domain check before public release |
 | D008 | Analytics | Aggregate positive engagement, no personnel scoring | Validate with privacy review P2/P8 |
-| D009 | Deployment | Containerized API/WebSocket, independent Next.js web | **Owner direction 2026-10-15:** no hosting/deploy work until the initial phases are built and tested locally (multi-browser + multi-client on the dev machine); then choose the target in a deployment ADR. Exact phase cut-off to be agreed. |
+| D009 | Deployment | Containerized API/WebSocket, independent Next.js web | **Owner direction 2026-10-15:** no hosting/deploy work until the initial phases are built and tested locally (multi-browser + multi-client on the dev machine); then choose the target in a deployment ADR. Cut-off confirmed by owner: stay local **until there is something usable on the UI**; revisit deployment at that point. |
 
 ## P0 decisions (2026-10-15, lead)
 

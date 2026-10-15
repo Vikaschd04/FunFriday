@@ -43,8 +43,8 @@ Exact versions are pinned in each `package.json`; `pnpm-lock.yaml` is the source
 | Tests | Vitest 5.0.4 + Vite 8.3.4, unplugin-swc 2.0.0 + @swc/core 1.16.18, Supertest 7.3.1, Playwright 1.64.1, @axe-core/playwright 4.13.0 | axe 4.14.0 skipped (published same day, no security need) |
 | Realtime | Socket.IO - **not installed in P0** | Pin in P4 with room-ownership ADR |
 
-- `pnpm-lock.yaml` committed: [ ] (generated; commit pending owner approval)
-- Dependency compatibility tested: [x] `pnpm lint/typecheck/test/build/test:integration/test:e2e/test:load` all exit 0 locally (see `docs/phases/P0_FOUNDATION.md`)
+- `pnpm-lock.yaml` committed: [x] (`29ec0f5`)
+- Dependency compatibility tested: [x] `pnpm lint/typecheck/test/build/test:integration/test:e2e/test:load` all exit 0 locally and in GitHub CI (see `docs/phases/P0_FOUNDATION.md`)
 
 ## Dependency rules
 

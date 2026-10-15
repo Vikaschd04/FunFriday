@@ -45,14 +45,14 @@ T4 runs in parallel with T5/T6 only because paths are disjoint.
 
 ## Acceptance checks
 
-- [x] `pnpm install --frozen-lockfile` reproduces from the lockfile (lockfile not yet committed - owner approval).
+- [x] `pnpm install --frozen-lockfile` reproduces from the committed lockfile (locally and in CI).
 - [x] `pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm build` exit 0.
 - [x] `pnpm db:up` brings Postgres/Redis healthy; `pnpm db:migrate` + `pnpm db:seed` succeed; seeding twice is idempotent (integration test).
 - [x] `GET /api/v1/health/live` 200; `GET /api/v1/health/ready` 200 with both deps up, 503 + `not_ready` when Redis is unreachable (integration test).
 - [x] Unknown route returns standard `{code,message,requestId}` envelope (integration test).
 - [x] Browser E2E: brand, live "operational" against the real API, keyboard re-check with focus retained, axe clean, no horizontal scroll at 320px.
 - [x] `pnpm test:load` runs 400 readiness requests at concurrency 20 with zero errors and reports p50/p95.
-- [~] CI workflow written to run the same commands with service containers - **not yet executed on GitHub** (no remote/commit).
+- [x] CI runs the same commands with Postgres/Redis service containers - green on GitHub ([run 38758446713](https://github.com/Vikaschd04/FunFriday/actions/runs/38758446713)).
 
 ## Risks
 
@@ -73,7 +73,7 @@ pnpm dev   # web http://localhost:3000, api http://localhost:4000/api/v1
 
 ## Gate report (QA_REPORT format)
 
-- Date: 2026-10-15, ~20:22-20:24 IST. Environment: macOS 26 (Darwin 25.5, arm64), Node 22.22.0, pnpm 11.20.0, Docker 29.5 via Colima, Postgres 17-alpine + Redis 7-alpine (compose), Chromium 156 (Playwright 1.64.1). Commit: none yet (repo initialised, nothing committed).
+- Date: 2026-10-15, ~20:22-20:24 IST. Environment: macOS 26 (Darwin 25.5, arm64), Node 22.22.0, pnpm 11.20.0, Docker 29.5 via Colima, Postgres 17-alpine + Redis 7-alpine (compose), Chromium 156 (Playwright 1.64.1). Commit: `29ec0f5` on `github.com/Vikaschd04/FunFriday` `main`.
 - Owners: lead (integration, API, infra, CI); `frontend-engineer` (web page); independent reviewers `security-reviewer`, `accessibility-reviewer` (read-only).
 - Final run used `TURBO_FORCE=true` (no cached results).
 
@@ -92,7 +92,7 @@ pnpm dev   # web http://localhost:3000, api http://localhost:4000/api/v1
 | Multi-client realtime | NOT RUN | Socket.IO is P4 scope | - |
 | Accessibility review | PASS (no blockers) | H1 focus loss + M1/M2/M3/L1-L3 **fixed**; manual SR/zoom/forced-colors NOT RUN | Manual passes pending (P1) |
 | Security review | PASS (no stop-ship) | 2 Medium follow-ups (below); source inspection, not a pen test | - |
-| CI on GitHub | NOT RUN | `.github/workflows/ci.yml` written; needs commit + remote | Workflow unproven until first run |
+| CI on GitHub | PASS | [run 38758446713](https://github.com/Vikaschd04/FunFriday/actions/runs/38758446713): all 17 steps green on ubuntu-latest in 2m41s (install, format, lint, typecheck, unit, build, integration, migrate+seed, Playwright E2E, load smoke) | - |
 | Kit validator | PASS | `scripts/validate_pack.py` (in isolated venv) | - |
 
 ### Defects found and fixed during P0
@@ -112,4 +112,4 @@ pnpm dev   # web http://localhost:3000, api http://localhost:4000/api/v1
 
 ### Gate decision
 
-**GO for P1, conditional on owner review**: all mandatory local checks pass, no critical/high open defects. Conditions: (1) owner approves the initial commit; (2) the first GitHub CI run must pass before P1 work merges. P1 has not been started.
+**GO for P1.** All mandatory checks pass locally and on GitHub CI; no critical/high open defects. Both conditions are met: the owner approved the push (`29ec0f5`), and the first CI run passed. P1 has not been started.

@@ -33,12 +33,12 @@ Some phases can overlap in design/prototyping; dependent implementation steps re
 
 ## Detailed phase checklists
 
-### P0 - Foundation [GO, pending owner review - see docs/phases/P0_FOUNDATION.md]
+### P0 - Foundation [GO - verified locally and in GitHub CI; see docs/phases/P0_FOUNDATION.md]
 - [x] Confirm available tools, choose current compatible stable dependency versions, pin lockfile.
 - [x] Create pnpm/Turbo monorepo and apps/packages per architecture.
 - [x] Start local PostgreSQL and Redis, migrations/seed runner.
 - [x] Implement API health/readiness endpoints and branded frontend.
-- [x] Environment files/example/secrets policy; CI lint/type/unit/build baseline (CI not yet run on GitHub).
+- [x] Environment files/example/secrets policy; CI lint/type/unit/build baseline (green on GitHub).
 - [x] Prove `pnpm dev`, `pnpm build`, lint, typecheck and smoke test.
 - [x] ADR 0001 stack decision (auth provider deferred to P2 ADR); update memory.
 

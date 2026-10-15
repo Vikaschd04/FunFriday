@@ -1,8 +1,8 @@
 # Project Status
 
 **As of:** 2026-10-15
-**Current phase:** P0 - Foundation -> **GO for P1, pending owner review** (P1 not started)
-**Build status:** Working monorepo. Local lint/typecheck/unit/build/integration/E2E/load smoke all pass. Nothing committed yet; GitHub CI not yet run.
+**Current phase:** P0 - Foundation -> **GO for P1** (P1 not started)
+**Build status:** Working monorepo. All checks pass locally and in GitHub CI. Code at github.com/Vikaschd04/FunFriday (`main`).
 
 ## Latest completed work (P0)
 
@@ -16,9 +16,8 @@
 
 ## Next tasks
 
-1. Code is pushed to GitHub `Vikaschd04/FunFriday` (`main`); confirm the first CI run passes (see Last test evidence).
-2. **Deployment is deferred by owner direction (D009):** build the initial phases, test locally first, then pick a hosting target via a deployment ADR.
-3. Start P1 (premium design system) via `/start-phase P1` - include the P0 follow-ups below.
+1. **Deployment is deferred by owner direction (D009):** stay local until there is something usable on the UI, test it locally, then pick a hosting target via a deployment ADR.
+2. Start P1 (premium design system) via `/start-phase P1` - include the P0 follow-ups below.
 
 ## Open follow-ups from the P0 gate
 
@@ -35,7 +34,7 @@
 
 ## Last test evidence
 
-Full detail and commands: `docs/phases/P0_FOUNDATION.md` -> Gate report. Summary (2026-10-15, cache disabled): 83 unit, 12 integration, 7 E2E (Chromium) passed; load smoke p95 20.2 ms @ 20 concurrent, 0 failures. Multi-client realtime: NOT RUN (P4). GitHub CI: NOT RUN.
+Full detail and commands: `docs/phases/P0_FOUNDATION.md` -> Gate report. Summary (2026-10-15, cache disabled): 83 unit, 12 integration, 7 E2E (Chromium) passed; load smoke p95 20.2 ms @ 20 concurrent, 0 failures. GitHub CI: PASS ([run 38758446713](https://github.com/Vikaschd04/FunFriday/actions/runs/38758446713), 17/17 steps). Multi-client realtime: NOT RUN (P4).
 
 ## Local environment notes
 
