@@ -1,0 +1,38 @@
+// FunFriday persistent schema. P0 holds only the global activity catalog;
+// tenant-owned models (organizations, teams, events...) arrive in P2+ with
+// explicit orgId scoping. See docs/DATA_MODEL.md.
+
+generator client {
+  provider            = "prisma-client"
+  output              = "../src/generated/prisma"
+  moduleFormat        = "esm"
+  importFileExtension = "js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum ActivityAvailability {
+  PLANNED
+  ENABLED
+  DISABLED
+}
+
+/// Canonical game types and their limits. Global, non-tenant, no personal data.
+model ActivityDefinition {
+  id                  String               @id @default(uuid()) @db.Uuid
+  slug                String               @unique @db.VarChar(64)
+  name                String               @db.VarChar(80)
+  summary             String               @db.VarChar(280)
+  manifestVersion     String               @map("manifest_version") @db.VarChar(32)
+  minPlayers          Int                  @map("min_players")
+  maxPlayers          Int                  @map("max_players")
+  estimatedMinutesMin Int                  @map("estimated_minutes_min")
+  estimatedMinutesMax Int                  @map("estimated_minutes_max")
+  availability        ActivityAvailability @default(PLANNED)
+  createdAt           DateTime             @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt           DateTime             @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  @@map("activity_definitions")
+}

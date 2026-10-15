@@ -1,0 +1,124 @@
+@import 'tailwindcss';
+@import '@funfriday/ui/tokens.css';
+
+/* Map FunFriday tokens (--ff-*) into Tailwind v4 utilities. */
+@theme inline {
+  --color-ff-ink: var(--ff-ink);
+  --color-ff-violet-50: var(--ff-violet-50);
+  --color-ff-violet-600: var(--ff-violet-600); /* decorative only: 4.29:1 on white */
+  --color-ff-violet-700: var(--ff-violet-700); /* filled actions with white text */
+  --color-ff-violet-800: var(--ff-violet-800);
+  --color-ff-coral-500: var(--ff-coral-500);
+  --color-ff-coral-700: var(--ff-coral-700);
+  --color-ff-mint-500: var(--ff-mint-500);
+  --color-ff-mint-700: var(--ff-mint-700);
+  --color-ff-sun-400: var(--ff-sun-400);
+  --color-ff-canvas: var(--ff-canvas);
+  --color-ff-surface: var(--ff-surface);
+  --color-ff-border: var(--ff-border);
+  --color-ff-border-strong: var(--ff-border-strong);
+  --color-ff-muted: var(--ff-muted);
+  --color-ff-mint-50: var(--ff-mint-50);
+  --color-ff-coral-50: var(--ff-coral-50);
+  --color-ff-sun-50: var(--ff-sun-50);
+
+  --radius-ff-button: var(--ff-radius-button);
+  --radius-ff-card: var(--ff-radius-card);
+
+  --font-heading: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+}
+
+html {
+  background: var(--ff-canvas);
+  color: var(--ff-ink);
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  min-height: 100dvh;
+  font-family: var(--font-sans);
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+/* Visible focus: violet-700 is >= 5.9:1 on canvas and surface (needs >= 3:1). */
+:focus-visible {
+  outline: 3px solid var(--ff-violet-700);
+  outline-offset: 3px;
+}
+
+/* Skip-link target: focus moves here programmatically; the next Tab reaches the first control. */
+#main:focus {
+  outline: none;
+}
+
+.ff-skip-link {
+  position: absolute;
+  left: 16px;
+  top: -80px;
+  z-index: 50;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 20px;
+  border-radius: var(--ff-radius-button);
+  background: var(--ff-violet-700);
+  color: #fff;
+  font-weight: 600;
+}
+.ff-skip-link:focus {
+  top: 16px;
+}
+
+/* Motion: short, purposeful, and disabled under reduced motion. */
+@keyframes ff-enter {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes ff-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.ff-enter {
+  animation: ff-enter var(--ff-duration-enter) var(--ff-ease-out) both;
+  animation-delay: calc(var(--ff-i, 0) * 60ms);
+}
+.ff-spin {
+  animation: ff-spin 900ms linear infinite;
+}
+.ff-press {
+  transition:
+    background-color var(--ff-duration-press) var(--ff-ease-out),
+    transform var(--ff-duration-press) var(--ff-ease-out);
+}
+.ff-press:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ff-enter,
+  .ff-spin {
+    animation: none;
+  }
+  .ff-press {
+    transition: none;
+  }
+  .ff-press:active:not(:disabled) {
+    transform: none;
+  }
+}
+
+/* Windows high contrast: keep the outline visible. */
+@media (forced-colors: active) {
+  :focus-visible {
+    outline-color: Highlight;
+  }
+}

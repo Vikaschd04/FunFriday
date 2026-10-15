@@ -1,0 +1,25 @@
+node_modules/
+.next/
+dist/
+.turbo/
+coverage/
+playwright-report/
+test-results/
+.env
+.env.*
+!.env.example
+!.env.development.example
+!.env.test.example
+*.pem
+*.key
+*.p12
+*.log
+.DS_Store
+.claude/settings.local.json
+.claude/agent-memory-local/
+*.tsbuildinfo
+next-env.d.ts
+# Generated Prisma client (rebuilt by `turbo run db:generate`)
+apps/api/src/generated/
+# Local Salesforce CLI org metadata cache (unrelated to this project)
+.sf/

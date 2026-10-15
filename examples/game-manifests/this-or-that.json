@@ -1,0 +1,22 @@
+{
+  "id": "this-or-that",
+  "name": "This or That",
+  "version": "0.1.0",
+  "status": "specification-only",
+  "goal": "Break the ice and discover shared interests",
+  "minPlayers": 2,
+  "maxPlayersTarget": 200,
+  "modes": ["noncompetitive", "audience"],
+  "estimatedMinutes": [3, 8],
+  "roundsDefault": 6,
+  "roundSecondsDefault": 30,
+  "actions": ["voteA", "voteB", "pass"],
+  "scoring": "none",
+  "hostControls": ["start", "pause", "resume", "closeRound", "nextRound", "skip"],
+  "promptExamples": [
+    {"id": "tot-001", "question": "Coffee or tea?", "optionA": "Coffee", "optionB": "Tea"},
+    {"id": "tot-002", "question": "Mountains or beaches?", "optionA": "Mountains", "optionB": "Beaches"},
+    {"id": "tot-003", "question": "Board games or movie night?", "optionA": "Board games", "optionB": "Movie night"}
+  ],
+  "testCases": ["unique response", "late response rejected", "pass not penalized", "reconnect state preserved"]
+}

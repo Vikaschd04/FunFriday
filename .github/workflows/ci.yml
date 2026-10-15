@@ -1,0 +1,109 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  TURBO_TELEMETRY_DISABLED: '1'
+  NEXT_TELEMETRY_DISABLED: '1'
+  # NODE_ENV is deliberately unset: `next build` requires production semantics,
+  # and integration tests set NODE_ENV=test themselves.
+  # CI-only throwaway credentials for ephemeral service containers.
+  DATABASE_URL: postgresql://funfriday_ci:funfriday_ci_only@localhost:5432/funfriday_ci?schema=public
+  TEST_DATABASE_URL: postgresql://funfriday_ci:funfriday_ci_only@localhost:5432/funfriday_test?schema=public
+  REDIS_URL: redis://localhost:6379
+  WEB_ORIGIN: http://localhost:3000
+  API_HOST: 127.0.0.1
+  API_PORT: '4000'
+  NEXT_PUBLIC_API_BASE_URL: http://localhost:4000/api/v1
+
+jobs:
+  verify:
+    name: Lint, types, tests, build, E2E, load smoke
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: funfriday_ci
+          POSTGRES_PASSWORD: funfriday_ci_only
+          POSTGRES_DB: funfriday_ci
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U funfriday_ci -d funfriday_ci"
+          --health-interval 5s --health-timeout 3s --health-retries 10
+      redis:
+        image: redis:7-alpine
+        ports: ['6379:6379']
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 5s --health-timeout 3s --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4 # version comes from package.json "packageManager"
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+
+      - name: Install (frozen lockfile)
+        run: pnpm install --frozen-lockfile
+
+      - name: Format check
+        run: pnpm format:check
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Typecheck
+        run: pnpm typecheck
+
+      - name: Unit tests
+        run: pnpm test
+
+      - name: Build
+        run: pnpm build
+
+      - name: Create integration test database
+        run: PGPASSWORD=funfriday_ci_only psql -h localhost -U funfriday_ci -d funfriday_ci -c 'CREATE DATABASE funfriday_test'
+
+      - name: Integration tests (real Postgres + Redis)
+        run: pnpm test:integration
+
+      - name: Migrate and seed
+        run: |
+          pnpm --filter @funfriday/api db:deploy
+          pnpm db:seed
+
+      - name: Install Playwright Chromium
+        run: pnpm --filter @funfriday/web exec playwright install --with-deps chromium
+
+      - name: Browser E2E (starts real API + web)
+        run: pnpm test:e2e
+
+      - name: Load smoke (20 concurrent clients against readiness)
+        run: |
+          pnpm --filter @funfriday/api start > api.log 2>&1 &
+          for i in $(seq 1 60); do curl -sf http://localhost:4000/api/v1/health/live >/dev/null && break; sleep 1; done
+          pnpm test:load
+
+      - name: Upload Playwright report
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: apps/web/playwright-report
+          retention-days: 7

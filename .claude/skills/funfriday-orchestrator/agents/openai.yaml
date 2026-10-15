@@ -1,0 +1,4 @@
+interface:
+  display_name: FunFriday Orchestrator
+  short_description: Coordinate phase-wise building and QA for FunFriday
+  brand_color: "#7765EF"

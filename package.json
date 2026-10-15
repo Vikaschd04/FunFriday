@@ -1,0 +1,32 @@
+{
+  "name": "funfriday",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@11.20.0",
+  "engines": {
+    "node": ">=22.12.0",
+    "pnpm": ">=11.20.0"
+  },
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "lint": "turbo run lint",
+    "typecheck": "turbo run typecheck",
+    "test": "turbo run test",
+    "test:integration": "turbo run test:integration",
+    "test:e2e": "turbo run test:e2e",
+    "test:load": "node tests/performance/health-load-smoke.mjs",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "db:up": "sh scripts/compose.sh up -d --wait",
+    "db:down": "sh scripts/compose.sh down",
+    "db:migrate": "pnpm --filter @funfriday/api db:migrate",
+    "db:seed": "pnpm --filter @funfriday/api db:seed",
+    "validate:kit": "python3 scripts/validate_pack.py"
+  },
+  "devDependencies": {
+    "prettier": "3.9.10",
+    "turbo": "2.11.8",
+    "typescript": "6.0.3"
+  }
+}

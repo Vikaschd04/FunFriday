@@ -1,0 +1,16 @@
+node_modules
+pnpm-lock.yaml
+dist
+.next
+.turbo
+coverage
+playwright-report
+test-results
+apps/api/src/generated
+apps/api/prisma/migrations
+next-env.d.ts
+# Starter-kit documentation is authored prose; do not reflow it.
+*.md
+.claude
+.sf
+examples

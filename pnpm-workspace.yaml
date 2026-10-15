@@ -1,0 +1,34 @@
+packages:
+  - apps/*
+  - packages/*
+
+# pnpm 11 blocks dependency lifecycle scripts unless explicitly allowed.
+# Each entry below is required: Prisma schema engine (migrations), native
+# SWC/esbuild binaries (API tests, tsx seed runner), native ESLint resolver.
+allowBuilds:
+  '@prisma/engines': true
+  '@swc/core': true
+  esbuild: true
+  prisma: true
+  unrs-resolver: true
+
+# pnpm 11 refuses packages younger than its minimum release age (supply-chain
+# guard). Exclusions are allowed ONLY for verified security releases:
+# next@16.4.1 (+ its platform binaries/eslint config) fixes critical RCE
+# advisories GHSA-673q-mjm6-r5xr and GHSA-2464-fhr4-w9xw; react/react-dom
+# 19.3.1 is the coordinated same-day patch. Remove entries once they age out.
+minimumReleaseAgeExclude:
+  - '@next/env@16.4.1'
+  - '@next/eslint-plugin-next@16.4.1'
+  - '@next/swc-darwin-arm64@16.4.1'
+  - '@next/swc-darwin-x64@16.4.1'
+  - '@next/swc-linux-arm64-gnu@16.4.1'
+  - '@next/swc-linux-arm64-musl@16.4.1'
+  - '@next/swc-linux-x64-gnu@16.4.1'
+  - '@next/swc-linux-x64-musl@16.4.1'
+  - '@next/swc-win32-arm64-msvc@16.4.1'
+  - '@next/swc-win32-x64-msvc@16.4.1'
+  - eslint-config-next@16.4.1
+  - next@16.4.1
+  - react-dom@19.3.1
+  - react@19.3.1

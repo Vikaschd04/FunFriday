@@ -1,0 +1,27 @@
+{
+  "id": "trivia-rush",
+  "name": "Trivia Rush",
+  "version": "0.1.0",
+  "status": "specification-only",
+  "goal": "Friendly team competition and shared discovery",
+  "minPlayers": 2,
+  "maxPlayersTarget": 200,
+  "modes": ["individual", "teams"],
+  "estimatedMinutes": [8, 15],
+  "roundsDefault": 10,
+  "roundSecondsDefault": 25,
+  "actions": ["answer", "pass"],
+  "scoring": "server-authoritative; define precise formula in ADR before launch",
+  "hostControls": ["start", "pause", "resume", "reveal", "nextRound", "skip"],
+  "questionExample": {
+    "id": "tr-001",
+    "question": "Which planet is known as the Red Planet?",
+    "options": ["Venus", "Mars", "Jupiter", "Saturn"],
+    "correctOptionIndex": 1,
+    "category": "general",
+    "difficulty": "easy",
+    "locale": "en"
+  },
+  "securityNote": "Remove correctOptionIndex from participant payload before reveal",
+  "testCases": ["secret answer redaction", "one submission per round", "score consistency", "timer expiry", "team score ties"]
+}

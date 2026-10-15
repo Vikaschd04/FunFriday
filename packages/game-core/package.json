@@ -1,0 +1,30 @@
+{
+  "name": "@funfriday/game-core",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Deterministic, transport-free FunFriday game rules and primitives.",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "dev": "tsc -p tsconfig.build.json --watch --preserveWatchOutput",
+    "lint": "eslint .",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run"
+  },
+  "devDependencies": {
+    "@funfriday/config": "workspace:*",
+    "eslint": "10.12.0",
+    "typescript": "6.0.3",
+    "vite": "8.3.4",
+    "vitest": "5.0.4"
+  }
+}

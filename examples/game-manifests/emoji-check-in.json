@@ -1,0 +1,17 @@
+{
+  "id": "emoji-check-in",
+  "name": "Emoji Check-In",
+  "version": "0.1.0",
+  "status": "specification-only",
+  "goal": "Quick and low-pressure shared warmup",
+  "minPlayers": 2,
+  "maxPlayersTarget": 200,
+  "modes": ["noncompetitive"],
+  "estimatedMinutes": [2, 5],
+  "roundsDefault": 1,
+  "actions": ["selectEmoji", "pass"],
+  "scoring": "none",
+  "privacyRule": "No user-level mood analytics; reveal aggregate counts only",
+  "hostControls": ["start", "pause", "closeRound", "reveal"],
+  "testCases": ["keyboard-friendly choice", "pass available", "no identity export", "reconnect state preserved"]
+}

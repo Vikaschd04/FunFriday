@@ -1,0 +1,25 @@
+{
+  "name": "@funfriday/config",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Shared TypeScript and ESLint configuration for the FunFriday monorepo.",
+  "exports": {
+    "./tsconfig/base.json": "./tsconfig/base.json",
+    "./tsconfig/library.json": "./tsconfig/library.json",
+    "./tsconfig/nest.json": "./tsconfig/nest.json",
+    "./tsconfig/nextjs.json": "./tsconfig/nextjs.json",
+    "./eslint/base": "./eslint/base.js",
+    "./eslint/next": "./eslint/next.js"
+  },
+  "dependencies": {
+    "@eslint/js": "10.0.1",
+    "eslint-config-next": "16.4.1",
+    "globals": "17.13.0",
+    "typescript-eslint": "8.71.2"
+  },
+  "peerDependencies": {
+    "eslint": "10.12.0",
+    "typescript": "6.0.3"
+  }
+}
