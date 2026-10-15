@@ -11,6 +11,7 @@
   --ff-coral-50: #fff0ee;
   --ff-coral-500: #ff7067;
   --ff-coral-700: #b4372f;
+  --ff-coral-800: #962a23;
   --ff-mint-50: #ecfaf7;
   --ff-mint-500: #35c8b2;
   --ff-mint-700: #0e7a6b;
@@ -19,7 +20,7 @@
   --ff-canvas: #f8fafc;
   --ff-surface: #ffffff;
   --ff-border: #e5e9f2;
-  --ff-border-strong: #8a93a6;
+  --ff-border-strong: #7f889b;
   --ff-muted: #5b6478;
 
   --ff-radius-button: 12px;
@@ -28,13 +29,44 @@
   --ff-space-unit: 8px;
 
   --ff-duration-press: 120ms;
+  --ff-radius-sm: 8px;
+  --ff-radius-field: 12px;
+  --ff-radius-pill: 9999px;
+
+  --ff-shadow-ink: 32 41 73;
+  --ff-shadow-sm: 0 1px 2px rgb(32 41 73 / 0.06), 0 0 0 1px #e5e9f2;
+  --ff-shadow-md: 0 8px 20px -6px rgb(32 41 73 / 0.14);
+  --ff-shadow-lg: 0 20px 44px -14px rgb(32 41 73 / 0.22);
+
+  --ff-z-base: 0;
+  --ff-z-sticky: 10;
+  --ff-z-nav: 20;
+  --ff-z-popover: 30;
+  --ff-z-scrim: 40;
+  --ff-z-dialog: 50;
+  --ff-z-toast: 60;
+  --ff-z-skip: 100;
+
+  --ff-duration-fast: 160ms;
   --ff-duration-enter: 200ms;
+  --ff-duration-reveal: 360ms;
+  --ff-duration-meter: 400ms;
+  --ff-duration-shimmer: 1400ms;
+  --ff-stagger-step: 60ms;
   --ff-ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ff-ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+
+  --ff-focus-ring: var(--ff-violet-800);
+  --ff-tap-target: 44px;
 }
 
 @media (prefers-reduced-motion: reduce) {
   :root {
     --ff-duration-press: 0ms;
     --ff-duration-enter: 0ms;
+    --ff-duration-fast: 0ms;
+    --ff-duration-reveal: 0ms;
+    --ff-duration-meter: 0ms;
+    --ff-stagger-step: 0ms;
   }
 }

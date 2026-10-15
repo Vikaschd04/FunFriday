@@ -1,0 +1,13 @@
+# Weekly SHA-pin bumps for GitHub Actions. npm dependencies are NOT managed by
+# Dependabot: pnpm 11 policies (minimumReleaseAge, allowBuilds, overrides) need
+# reviewed manual updates; `pnpm audit` gates vulnerabilities in CI.
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    groups:
+      github-actions:
+        patterns: ['*']

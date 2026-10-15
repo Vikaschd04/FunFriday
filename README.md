@@ -2,7 +2,9 @@
 
 **Connect Beyond Work. Play Together. Grow Together.**
 
-This is an implementation blueprint and Claude Code configuration for building a full-stack, real-time corporate team-bonding application. **Phase P0 (Foundation) is implemented**: a working pnpm/Turborepo monorepo with a NestJS API, Next.js web app, PostgreSQL/Redis, tests and CI. Games, auth, events and realtime are **not built yet** (P1-P8). See `memory/STATUS.md`.
+This is an implementation blueprint and Claude Code configuration for building a full-stack, real-time corporate team-bonding application. **Phases P0 (Foundation) and P1 (Design system + first screens) are implemented**: a pnpm/Turborepo monorepo with a NestJS API, Next.js web app (landing, dashboard, activity library, event planner), PostgreSQL/Redis, tests and CI. Accounts, server-saved events, invitations and live games are **not built yet** (P2-P8). See `memory/STATUS.md`.
+
+**Want to try it?** Follow [docs/LOCAL_TESTING.md](docs/LOCAL_TESTING.md) - setup, what to click, and how to reset.
 
 ## Run it locally (after P0)
 

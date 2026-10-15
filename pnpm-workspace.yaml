@@ -32,3 +32,21 @@ minimumReleaseAgeExclude:
   - next@16.4.1
   - react-dom@19.3.1
   - react@19.3.1
+
+# Security overrides (pnpm audit, 2026-10-15). Both packages are pulled in only
+# by Prisma's CLI/config loader (dev + migration tooling, not request handling).
+#  - mysql2 <3.23.1: GHSA-3f6p-5ww8-9rcr (high), GHSA-rgwj-5xj2-c3m3 (moderate)
+#  - deepmerge-ts <8: GHSA-ggr8-5vv4-36mx (high); 8.x keeps ESM+CJS exports.
+# Verified with prisma generate/migrate/seed + API integration tests. Drop once
+# Prisma ships patched dependencies.
+overrides:
+  mysql2: 3.24.5
+  deepmerge-ts: 8.0.2
+
+auditConfig:
+  # braces <=3.0.3 (GHSA-vfj7-8cjw-p6xm): NO patched release exists on npm
+  # (latest is 3.0.3). Reachable only via eslint-config-next's glob matcher at
+  # lint time on our own source tree - no untrusted input.
+  # Owner: lead engineer. Accepted 2026-10-15; next review 2026-11-15.
+  ignoreGhsas:
+    - GHSA-vfj7-8cjw-p6xm

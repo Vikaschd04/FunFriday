@@ -36,9 +36,11 @@ describe('activity catalog migration + seed (real Postgres)', () => {
           maxPlayers: 2,
           estimatedMinutesMin: 1,
           estimatedMinutesMax: 2,
+          category: 'QUIZ',
+          displayOrder: 999,
         },
       }),
-    ).rejects.toThrow();
+    ).rejects.toThrow(/activity_definitions_players_check/);
   });
 
   it('rejects slugs that are not lowercase kebab-case', async () => {
@@ -53,8 +55,10 @@ describe('activity catalog migration + seed (real Postgres)', () => {
           maxPlayers: 4,
           estimatedMinutesMin: 1,
           estimatedMinutesMax: 2,
+          category: 'QUIZ',
+          displayOrder: 999,
         },
       }),
-    ).rejects.toThrow();
+    ).rejects.toThrow(/activity_definitions_slug_format_check/);
   });
 });

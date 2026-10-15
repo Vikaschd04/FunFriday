@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { fetchReadiness } from './api';
+import { fetchActivities, fetchReadiness } from './api';
 
 const body = (status: 'ready' | 'not_ready', redis: 'up' | 'down' = 'up') => ({
   status,
@@ -70,5 +70,57 @@ describe('fetchReadiness', () => {
     expect(await run(() => json({ status: 'ready' }, 200))).toEqual({ kind: 'invalid_response' });
     expect(await run(() => json(body('ready'), 500))).toEqual({ kind: 'invalid_response' });
     expect(await run(() => json(body('ready'), 503))).toEqual({ kind: 'invalid_response' });
+  });
+});
+
+const activity = {
+  slug: 'trivia-rush',
+  name: 'Trivia Rush',
+  summary: 'Fast, friendly trivia.',
+  category: 'quiz',
+  minPlayers: 2,
+  maxPlayers: 200,
+  estimatedMinutes: { min: 8, max: 15 },
+  availability: 'planned',
+};
+
+describe('fetchActivities', () => {
+  it('returns the validated catalog and calls /activities', async () => {
+    let calledUrl = '';
+    const result = await fetchActivities(base, {
+      fetchImpl: ((url: string) => {
+        calledUrl = url;
+        return json({ activities: [activity] }, 200);
+      }) as unknown as typeof fetch,
+    });
+    expect(calledUrl).toBe('http://api.test/api/v1/activities');
+    expect(result).toEqual({ kind: 'ok', activities: [activity] });
+  });
+
+  it('accepts an empty catalog', async () => {
+    const result = await fetchActivities(base, {
+      fetchImpl: (() => json({ activities: [] }, 200)) as unknown as typeof fetch,
+    });
+    expect(result).toEqual({ kind: 'ok', activities: [] });
+  });
+
+  it('is unreachable on network failure', async () => {
+    const result = await fetchActivities(base, {
+      fetchImpl: (() => Promise.reject(new TypeError('failed'))) as unknown as typeof fetch,
+    });
+    expect(result.kind).toBe('unreachable');
+  });
+
+  it('is invalid_response for non-200 status, bad JSON or contract mismatch', async () => {
+    const run = (make: () => Promise<Response>) =>
+      fetchActivities(base, { fetchImpl: make as unknown as typeof fetch });
+    expect((await run(() => json({ activities: [activity] }, 500))).kind).toBe('invalid_response');
+    expect((await run(() => Promise.resolve(new Response('not json', { status: 200 })))).kind).toBe(
+      'invalid_response',
+    );
+    expect(
+      (await run(() => json({ activities: [{ ...activity, slug: 'Bad Slug' }] }, 200))).kind,
+    ).toBe('invalid_response');
+    expect((await run(() => json({ nope: true }, 200))).kind).toBe('invalid_response');
   });
 });

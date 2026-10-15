@@ -7,6 +7,8 @@ import type { PrismaClient } from '../src/generated/prisma/client.js';
 export const activityCatalog = [
   {
     slug: 'this-or-that',
+    category: 'ICEBREAKER',
+    displayOrder: 10,
     name: 'This or That',
     summary: 'Quick two-option polls that reveal what the group has in common.',
     minPlayers: 2,
@@ -16,6 +18,8 @@ export const activityCatalog = [
   },
   {
     slug: 'emoji-check-in',
+    category: 'CHECK_IN',
+    displayOrder: 20,
     name: 'Emoji Check-In',
     summary: 'Pick the vibe you are bringing today; results are shown only as a group.',
     minPlayers: 2,
@@ -25,6 +29,8 @@ export const activityCatalog = [
   },
   {
     slug: 'trivia-rush',
+    category: 'QUIZ',
+    displayOrder: 30,
     name: 'Trivia Rush',
     summary: 'Fast, friendly trivia for individuals or teams with server-verified answers.',
     minPlayers: 2,
@@ -34,6 +40,8 @@ export const activityCatalog = [
   },
   {
     slug: 'who-am-i',
+    category: 'GUESSING',
+    displayOrder: 40,
     name: 'Who Am I?',
     summary: 'Guess colleagues from fun facts they chose to share; opt-in only.',
     minPlayers: 4,
@@ -43,6 +51,8 @@ export const activityCatalog = [
   },
   {
     slug: 'caption-clash',
+    category: 'CREATIVE',
+    displayOrder: 50,
     name: 'Caption Clash',
     summary: 'Write captions for a shared image and vote anonymously for favourites.',
     minPlayers: 4,
@@ -52,6 +62,8 @@ export const activityCatalog = [
   },
   {
     slug: 'sketch-and-guess',
+    category: 'CREATIVE',
+    displayOrder: 60,
     name: 'Sketch & Guess',
     summary: 'Draw and guess in small rooms; larger groups split into breakouts.',
     minPlayers: 3,

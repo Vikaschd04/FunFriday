@@ -71,6 +71,7 @@
 | Verb | Route | Access | Contract |
 | --- | --- | --- | --- |
 | GET | `/api/v1/health/live` | Public | `livenessResponseSchema` - process up, no dependency calls |
+| GET | `/api/v1/activities` | Public, read-only (global catalog) | `activityListResponseSchema` - display-ordered, `disabled` hidden, no ids/timestamps; `Cache-Control: public, max-age=60` (P1, D017) |
 | GET | `/api/v1/health/ready` | Public (restrict at ingress before public exposure) | `readinessResponseSchema` - 200 `ready` / 503 `not_ready`, per-dependency `up`/`down` + latency, no hostnames or errors |
 
 Every response carries `x-request-id` (caller value kept only if `^[A-Za-z0-9._-]{1,64}$`).

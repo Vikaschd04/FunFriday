@@ -18,7 +18,12 @@ export default defineConfig({
     baseURL: `http://localhost:${webPort}`,
     trace: 'retain-on-failure',
   },
-  projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
+  // Cross-browser from P1 (docs/QUALITY_STRATEGY.md): Chromium, Firefox, WebKit.
+  projects: [
+    { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
+    { name: 'firefox', use: { ...devices['Desktop Firefox'] } },
+    { name: 'webkit', use: { ...devices['Desktop Safari'] } },
+  ],
   webServer: [
     {
       command: 'pnpm --filter @funfriday/api start',

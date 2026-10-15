@@ -7,6 +7,8 @@
  *    decorative/brand accent only. Action fills use violet-700 (5.90:1 vs white).
  *  - coral-500 on white is 2.70:1 and mint-500 is lower; both are fills/accents
  *    paired with ink text. Text variants use the -700 shades.
+ *  - borderStrong was #8A93A6 (2.96:1 on canvas); #7F889B gives 3.40:1 on canvas,
+ *    3.56:1 on surface and >= 3:1 on violet50, so controls may sit on any of them.
  *  - muted text uses #5B6478 (5.67:1 on canvas) instead of #64748B (4.55:1) to
  *    keep headroom when surfaces are tinted.
  */
@@ -19,6 +21,7 @@ export const palette = {
   coral50: '#FFF0EE',
   coral500: '#FF7067',
   coral700: '#B4372F',
+  coral800: '#962A23',
   mint50: '#ECFAF7',
   mint500: '#35C8B2',
   mint700: '#0E7A6B',
@@ -27,7 +30,7 @@ export const palette = {
   canvas: '#F8FAFC',
   surface: '#FFFFFF',
   border: '#E5E9F2',
-  borderStrong: '#8A93A6',
+  borderStrong: '#7F889B',
   muted: '#5B6478',
 } as const;
 
@@ -47,6 +50,13 @@ export const semanticColors = {
   brandAccent: palette.violet600,
   brandPrimary: palette.violet700,
   brandPrimaryHover: palette.violet800,
+  brandPrimaryPressed: palette.violet800,
+  focusRing: palette.violet800,
+  focusRingOffset: palette.surface,
+  surfaceNavActive: palette.violet50,
+  fgOnDanger: palette.surface,
+  dangerFill: palette.coral700,
+  dangerFillHover: palette.coral800,
   accentCoral: palette.coral500,
   accentMint: palette.mint500,
   accentSun: palette.sun400,

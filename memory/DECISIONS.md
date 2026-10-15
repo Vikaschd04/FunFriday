@@ -24,6 +24,11 @@
 | D012 | Supply-chain policy | Honour pnpm minimum release age; exclusions only for verified security releases, documented inline | next@16.4.1 / react@19.3.1 excluded (critical RCE fixes) |
 | D013 | Test DB isolation | Integration tests use `TEST_DATABASE_URL` (`funfriday_test`), refused if equal to `DATABASE_URL` | Never mutate dev data from tests |
 | D015 | Source hosting | GitHub `Vikaschd04/FunFriday`, branch `main`; CI = `.github/workflows/ci.yml` | Owner-provided 2026-10-15 |
+| D016 | P1 honesty rules | UI without accounts/persistence uses real data only: activities API; builder saves drafts **on this device only**; no create/send/join/sign-in UI until built | `docs/phases/P1_DESIGN_SYSTEM.md` |
+| D017 | Activities API pulled forward | Read-only public `GET /api/v1/activities` (global catalog, display order, disabled hidden) in P1 instead of P3 | Real library data; P3 adds detail pages + org content |
+| D018 | Dependency security | `pnpm audit --audit-level high` gates CI; overrides mysql2 3.24.5 + deepmerge-ts 8.0.2 (Prisma CLI deps); braces GHSA-vfj7-8cjw-p6xm ignored (no patched release; lint-time only) | Re-check monthly; drop overrides when Prisma updates |
+| D019 | CI supply chain | Actions pinned to commit SHAs (checkout v7.0.1, setup-node v7.1.0, pnpm/action-setup v6.1.0, upload-artifact v7.0.2, setup-python v7.0.0); Dependabot for github-actions only | npm updates stay manual under pnpm 11 policies |
+| D020 | Web CSP | Baseline CSP + security headers in `next.config.ts`; script/style `'unsafe-inline'` until nonce-based CSP lands with P2 dynamic pages | Tracked P2 |
 | D014 | Env loading | Single root `.env` (local only) loaded with `process.loadEnvFile`; real env always wins; Zod-validated, errors name keys never values | No dotenv dependency; production uses secret manager |
 
 ## Recorded ADRs

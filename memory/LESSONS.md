@@ -19,6 +19,14 @@ Only add reproducible, cross-session knowledge that saves future work. No redund
 - 2026-10-15 | Nest DI under Vitest | Vite's transformer emits no decorator metadata | Use unplugin-swc with `decoratorMetadata` | `apps/api/vitest.shared.ts`
 - 2026-10-15 | Playwright `getByText` strict-mode failures | sr-only live region repeats visible status text | Use `exact: true` or role-scoped locators | E2E specs
 
+## P1 learnings (2026-10-15)
+
+- 2026-10-15 | "no horizontal scroll" E2E passed while a 320px row was unreadable | Narrow flex rows squeezed notices to ~110px | Pair reflow assertions with minimum content-width checks (e.g. notice >= 240px) and lead screenshot review | builder E2E
+- 2026-10-15 | Prisma `migrate dev --create-only` on a populated table | Required columns without defaults fail | Hand-edit to add-nullable, backfill, then SET NOT NULL | `apps/api/prisma/migrations/*_activity_category_and_order`
+- 2026-10-15 | `rejects.toThrow()` kept passing after a schema change | Failure reason changed from DB CHECK to missing field | Assert the specific constraint/error, not just "throws" | `apps/api/test/activity-catalog.int.spec.ts`
+- 2026-10-15 | Safari/WebKit focus | Clicks don't focus buttons/links; Tab skips links by default | Store dialog triggers explicitly; WebKit tests focus skip link directly | `apps/web` dialogs + E2E
+- 2026-10-15 | Advisory says "patched >=X" but X isn't published | braces 3.0.4 doesn't exist | Verify the patched version exists before planning an override; otherwise document an exception with a review date | `pnpm-workspace.yaml`
+
 ## Follow-up template
 
 `YYYY-MM-DD | Trigger | Observed evidence | Reusable conclusion | Where applied`

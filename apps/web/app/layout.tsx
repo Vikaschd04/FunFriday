@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import { Inter, Plus_Jakarta_Sans } from 'next/font/google';
 import type { ReactNode } from 'react';
+import { LiveRegionProvider, SkipLink } from '@funfriday/ui';
 import './globals.css';
 
 const jakarta = Plus_Jakarta_Sans({
@@ -18,8 +19,12 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: 'FunFriday - Connect Beyond Work',
-  description: 'Connect Beyond Work. Play Together. Grow Together. FunFriday is in development.',
+  title: {
+    default: 'FunFriday - Connect Beyond Work',
+    template: '%s - FunFriday',
+  },
+  description:
+    'Short, inclusive games that help teams relax, laugh and get to know each other. FunFriday is a preview build.',
 };
 
 export const viewport: Viewport = {
@@ -31,10 +36,8 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" className={`${jakarta.variable} ${inter.variable}`}>
       <body>
-        <a href="#main" className="ff-skip-link">
-          Skip to main content
-        </a>
-        {children}
+        <SkipLink />
+        <LiveRegionProvider>{children}</LiveRegionProvider>
       </body>
     </html>
   );

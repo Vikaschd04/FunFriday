@@ -42,12 +42,12 @@ Some phases can overlap in design/prototyping; dependent implementation steps re
 - [x] Prove `pnpm dev`, `pnpm build`, lint, typecheck and smoke test.
 - [x] ADR 0001 stack decision (auth provider deferred to P2 ADR); update memory.
 
-### P1 - Premium Design [not started]
-- [ ] Tokenize colors/typography/spacing/radii/shadows/icons/motion.
-- [ ] Landing hero, product preview, application navigation and dashboard shell.
-- [ ] Library card and event builder prototypes with real UI state.
-- [ ] Loading/empty/denied/error states; mobile and reduced-motion.
-- [ ] Screenshots 320px, tablet and desktop; accessibility walkthrough.
+### P1 - Premium Design [GO - see docs/phases/P1_DESIGN_SYSTEM.md]
+- [x] Tokenize colors/typography/spacing/radii/shadows/icons/motion.
+- [x] Landing hero, product preview, application navigation and dashboard shell.
+- [x] Library card and event builder prototypes with real UI state (real catalog API; drafts on this device).
+- [x] Loading/empty/denied/error states; mobile and reduced-motion (denied state wired to real auth in P2).
+- [x] Screenshots 320px, tablet and desktop; accessibility walkthrough (automated + reviewer; manual SR pending).
 
 ### P2 - Workspace & Auth [not started]
 - [ ] Auth/provider selection ADR, login/logout/secure session.

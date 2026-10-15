@@ -1,4 +1,9 @@
-import { readinessResponseSchema, type ReadinessResponse } from '@funfriday/contracts';
+import {
+  activityListResponseSchema,
+  readinessResponseSchema,
+  type ActivitySummary,
+  type ReadinessResponse,
+} from '@funfriday/contracts';
 
 export const DEFAULT_API_BASE_URL = 'http://localhost:4000/api/v1';
 export const READINESS_TIMEOUT_MS = 5000;
@@ -66,4 +71,47 @@ export async function fetchReadiness(
     return { kind: 'not_ready', data: parsed.data };
   }
   return { kind: 'invalid_response' };
+}
+
+export type ActivitiesResult =
+  | { kind: 'ok'; activities: ActivitySummary[] }
+  | { kind: 'unreachable' }
+  | { kind: 'invalid_response' };
+
+export const ACTIVITIES_TIMEOUT_MS = 8000;
+
+/**
+ * Calls GET {base}/activities (read-only global catalog) and validates the body
+ * against the shared contract. Never throws.
+ */
+export async function fetchActivities(
+  baseUrl: string,
+  { fetchImpl = fetch, signal, timeoutMs = ACTIVITIES_TIMEOUT_MS }: FetchReadinessOptions = {},
+): Promise<ActivitiesResult> {
+  const url = `${baseUrl.replace(/\/+$/, '')}/activities`;
+  const signals = [AbortSignal.timeout(timeoutMs)];
+  if (signal) signals.push(signal);
+
+  let response: Response;
+  try {
+    response = await fetchImpl(url, {
+      method: 'GET',
+      headers: { Accept: 'application/json' },
+      cache: 'no-store',
+      signal: AbortSignal.any(signals),
+    });
+  } catch {
+    return { kind: 'unreachable' };
+  }
+  if (response.status !== 200) return { kind: 'invalid_response' };
+
+  let body: unknown;
+  try {
+    body = await response.json();
+  } catch {
+    return { kind: 'invalid_response' };
+  }
+  const parsed = activityListResponseSchema.safeParse(body);
+  if (!parsed.success) return { kind: 'invalid_response' };
+  return { kind: 'ok', activities: parsed.data.activities };
 }

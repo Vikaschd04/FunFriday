@@ -6,16 +6,7 @@ import {
 } from '@funfriday/contracts';
 import request from 'supertest';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { createApp } from '../src/app.factory.js';
-import { type AppConfig, parseConfig } from '../src/config/app-config.js';
-import { resolveTestEnv } from './test-env.js';
-
-async function startApp(overrides: Partial<AppConfig> = {}): Promise<NestExpressApplication> {
-  const config = { ...parseConfig(resolveTestEnv()), ...overrides };
-  const app = await createApp(config, { logger: false });
-  await app.init();
-  return app;
-}
+import { startApp } from './app-harness.js';
 
 describe('health endpoints against real Postgres + Redis', () => {
   let app: NestExpressApplication;

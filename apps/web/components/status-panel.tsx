@@ -72,7 +72,7 @@ export function StatusPanel() {
     >
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h2 id="status-heading" className="font-heading text-xl font-bold text-ff-ink">
-          System status
+          Service health
         </h2>
         <span
           className={`inline-flex min-h-8 items-center gap-2 rounded-full px-3 py-1 text-sm font-semibold ${tone.badge}`}

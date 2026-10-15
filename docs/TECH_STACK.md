@@ -41,7 +41,10 @@ Exact versions are pinned in each `package.json`; `pnpm-lock.yaml` is the source
 | Ephemeral | ioredis 5.11.1, Redis 7 (compose/CI image) | 6.0 deferred to P4 review |
 | Lint/format | ESLint **10.12.0**, @eslint/js 10.0.1, typescript-eslint 8.71.2, eslint-config-next 16.4.1, Prettier 3.9.10 | ESLint 9 is unsupported; Next plugins verified working on 10 |
 | Tests | Vitest 5.0.4 + Vite 8.3.4, unplugin-swc 2.0.0 + @swc/core 1.16.18, Supertest 7.3.1, Playwright 1.64.1, @axe-core/playwright 4.13.0 | axe 4.14.0 skipped (published same day, no security need) |
-| Realtime | Socket.IO - **not installed in P0** | Pin in P4 with room-ownership ADR |
+| UI tests (P1) | @testing-library/react 16.3.3, dom 10.4.2, user-event 14.6.8, jest-dom 7.0.1, jsdom 30.1.2 | jsdom 30.1.3 skipped (same-day release) |
+| Security overrides (P1) | mysql2 3.24.5, deepmerge-ts 8.0.2 via `pnpm-workspace.yaml` overrides | D018 |
+| E2E browsers (P1) | Playwright Chromium 156, Firefox 157, WebKit 27.2 | All three in CI |
+| Realtime | Socket.IO - **not installed yet** | Pin in P4 with room-ownership ADR |
 
 - `pnpm-lock.yaml` committed: [x] (`29ec0f5`)
 - Dependency compatibility tested: [x] `pnpm lint/typecheck/test/build/test:integration/test:e2e/test:load` all exit 0 locally and in GitHub CI (see `docs/phases/P0_FOUNDATION.md`)

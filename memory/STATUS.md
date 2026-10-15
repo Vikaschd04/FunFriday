@@ -1,45 +1,44 @@
 # Project Status
 
 **As of:** 2026-10-15
-**Current phase:** P0 - Foundation -> **GO for P1** (P1 not started)
-**Build status:** Working monorepo. All checks pass locally and in GitHub CI. Code at github.com/Vikaschd04/FunFriday (`main`).
+**Current phase:** P1 - Premium Design -> **GO for P2** (pending first CI run of this commit). P2 not started.
+**Build status:** All checks pass locally (249 unit, 16 integration, 135 E2E across Chromium/Firefox/WebKit). Code at github.com/Vikaschd04/FunFriday (`main`).
 
-## Latest completed work (P0)
+## What works now (try it: `docs/LOCAL_TESTING.md`)
 
-- [x] Versions verified against npm and pinned exactly (see `docs/TECH_STACK.md`); lockfile generated.
-- [x] pnpm 11 + Turborepo monorepo: `apps/{api,web}`, `packages/{config,contracts,game-core,ui}`.
-- [x] NestJS 12 API: `/api/v1/health/live`, `/api/v1/health/ready` (real Postgres + Redis), error envelope, request ids, helmet, CORS allowlist, Zod env.
-- [x] Prisma 7 schema + first migration (with DB CHECKs) + idempotent seed of the six-activity catalog.
-- [x] Next.js 16 branded home page with live, contract-validated system status; tokens with WCAG contrast tests.
-- [x] Compose (Postgres 17, Redis 7, separate `funfriday_test` DB), `.env.example`, CI workflow, HTTP load smoke.
-- [x] ADR 0001 accepted for P0 scope; independent security + accessibility reviews (no stop-ship/blockers; a11y High/Medium fixed).
+- Landing page, system status page, 404/error/loading states.
+- App shell (sidebar / tablet rail / mobile tab bar), dashboard with drafts **saved on this device only**.
+- Activity library on real API data (`GET /api/v1/activities`) with search, filters, URL-synced state.
+- Event planner: Basics -> Participants -> Activities -> Review, DST-aware times, runtime meter, keyboard reorder, draft save/restore/delete.
+- Design system in `packages/ui` (tokens + accessible components, 133 tests); shared contracts for activities, event drafts and time zones.
 
 ## Next tasks
 
-1. **Deployment is deferred by owner direction (D009):** stay local until there is something usable on the UI, test it locally, then pick a hosting target via a deployment ADR.
-2. Start P1 (premium design system) via `/start-phase P1` - include the P0 follow-ups below.
+1. **Deployment stays deferred (D009):** the owner wanted local testing until there is something usable on the UI - P1 is the first such build. Owner to try `docs/LOCAL_TESTING.md`, then decide whether to raise the deployment ADR now or after more phases.
+2. Start P2 (auth, organisations, roles, tenant isolation) via `/start-phase P2` - needs an auth-provider ADR first (managed OIDC vs Auth.js).
+3. Carry the P1 follow-ups below.
 
-## Open follow-ups from the P0 gate
+## Open follow-ups
 
-- Medium (security): `/health/ready` is an unauthenticated DB+Redis probe - cache/single-flight + rate limit or keep internal before any public deploy.
-- Medium (security, P2): CSRF defences with cookie sessions.
-- Low: log redaction/structured logger; web CSP headers; pin Actions to SHAs + Dependabot + `pnpm audit`; remove pnpm release-age exclusions once aged.
-- A11y manual passes: VoiceOver/NVDA, 200-400% zoom, forced colours, Firefox/WebKit E2E projects.
+- Security (P2): nonce-based CSP; rate limiting before org-specific content; CSRF with cookie sessions; readiness probe cache/rate limit before any public deploy; structured logging with redaction.
+- A11y manual passes: VoiceOver/NVDA, real 200-400% zoom, Windows forced colours, real Safari.
+- UX: unsaved-draft guard on browser Back; `error.tsx` E2E; design nice-to-haves (see P1 gate report).
+- Dependency hygiene: audit exception review 2026-11-15; drop overrides/release-age exclusions once upstream catches up.
 
 ## Blockers and risks
 
-- None blocking. Disk on the dev machine was full (ENOSPC) at start; npm cache was cleared with owner approval (~13 GB free afterwards, ~9 GB at end). Keep >= 4 GB free.
-- External credentials intentionally absent (email/calendar/auth are later phases).
-- Brand/trademark/domain unverified. Participant caps remain design targets until P4/P8 load tests.
+- None blocking. Disk on the dev machine is tight (~8 GB free); keep >= 4 GB.
+- Drafts in browser storage are intentionally temporary until P3 persistence; the UI says so everywhere.
+- Brand/trademark unverified; participant caps remain design targets until P4/P8 load tests.
 
 ## Last test evidence
 
-Full detail and commands: `docs/phases/P0_FOUNDATION.md` -> Gate report. Summary (2026-10-15, cache disabled): 83 unit, 12 integration, 7 E2E (Chromium) passed; load smoke p95 20.2 ms @ 20 concurrent, 0 failures. GitHub CI: PASS ([run 38758446713](https://github.com/Vikaschd04/FunFriday/actions/runs/38758446713), 17/17 steps). Multi-client realtime: NOT RUN (P4).
+`docs/phases/P1_DESIGN_SYSTEM.md` -> Gate report (2026-10-15 22:24-22:27 IST, cache disabled). P0 evidence: `docs/phases/P0_FOUNDATION.md`; P0 GitHub CI run 38758446713 (17/17 steps).
 
 ## Local environment notes
 
-Docker runs via Colima (`colima start`). Services: `pnpm db:up` / `pnpm db:down`. Ports 3000 (web), 4000 (API), 5432, 6379 on 127.0.0.1.
+Docker via Colima (`colima start`). `pnpm db:up` / `pnpm db:down`. Ports 3000 web, 4000 API, 5432, 6379 on 127.0.0.1. Playwright browsers: Chromium, Firefox, WebKit installed.
 
 ## Handoff
 
-On resume: read `CLAUDE.md`, this file, `docs/phases/P0_FOUNDATION.md`, then `docs/ROADMAP.md` P1. Do not begin P1 until the owner has reviewed P0.
+On resume: read `CLAUDE.md`, this file, `docs/phases/P1_DESIGN_SYSTEM.md`, then `docs/ROADMAP.md` P2. Do not start P2 until the owner has reviewed P1 locally.

@@ -1,0 +1,247 @@
+/*
+ * FunFriday Tailwind v4 theme for @funfriday/ui.
+ *
+ * Consumers (after `@import 'tailwindcss';`):
+ *   @import '@funfriday/ui/theme.css';
+ *   @source '../../../packages/ui/src';   <- REQUIRED: Tailwind v4 does not scan node_modules/
+ *                                            workspace packages by default, so without this the
+ *                                            component utility classes are never generated.
+ */
+@import './tokens/tokens.css';
+
+@theme inline {
+  --color-ff-ink: var(--ff-ink);
+  --color-ff-violet-50: var(--ff-violet-50);
+  --color-ff-violet-600: var(--ff-violet-600); /* decorative only: 4.29:1 on white */
+  --color-ff-violet-700: var(--ff-violet-700); /* filled actions with white text */
+  --color-ff-violet-800: var(--ff-violet-800);
+  --color-ff-coral-50: var(--ff-coral-50);
+  --color-ff-coral-500: var(--ff-coral-500);
+  --color-ff-coral-700: var(--ff-coral-700);
+  --color-ff-coral-800: var(--ff-coral-800);
+  --color-ff-mint-50: var(--ff-mint-50);
+  --color-ff-mint-500: var(--ff-mint-500);
+  --color-ff-mint-700: var(--ff-mint-700);
+  --color-ff-sun-50: var(--ff-sun-50);
+  --color-ff-sun-400: var(--ff-sun-400);
+  --color-ff-canvas: var(--ff-canvas);
+  --color-ff-surface: var(--ff-surface);
+  --color-ff-border: var(--ff-border);
+  --color-ff-border-strong: var(--ff-border-strong);
+  --color-ff-muted: var(--ff-muted);
+
+  --radius-ff-sm: var(--ff-radius-sm);
+  --radius-ff-button: var(--ff-radius-button);
+  --radius-ff-field: var(--ff-radius-field);
+  --radius-ff-card: var(--ff-radius-card);
+  --radius-ff-dialog: var(--ff-radius-dialog);
+
+  --shadow-ff-sm: var(--ff-shadow-sm);
+  --shadow-ff-md: var(--ff-shadow-md);
+  --shadow-ff-lg: var(--ff-shadow-lg);
+
+  --font-heading:
+    var(--font-jakarta), 'Plus Jakarta Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-sans: var(--font-inter), Inter, system-ui, -apple-system, 'Segoe UI', sans-serif;
+}
+
+/* Focus: 3px violet-800 ring, 2px offset, never removed (spec 1.4). */
+:focus-visible {
+  outline: 3px solid var(--ff-focus-ring);
+  outline-offset: 2px;
+}
+input:focus,
+textarea:focus,
+select:focus {
+  outline: 3px solid var(--ff-focus-ring);
+  outline-offset: 2px;
+}
+.ff-filled:focus-visible {
+  box-shadow: 0 0 0 2px var(--ff-surface);
+}
+
+/* Motion. All durations come from tokens, which are 0ms under reduced motion. */
+@keyframes ff-enter {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes ff-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes ff-shimmer {
+  from {
+    background-position: 200% 0;
+  }
+  to {
+    background-position: -200% 0;
+  }
+}
+@keyframes ff-dialog-in {
+  from {
+    opacity: 0;
+    transform: scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes ff-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes ff-toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes ff-highlight {
+  from {
+    background-color: var(--ff-violet-50);
+  }
+  to {
+    background-color: var(--ff-surface);
+  }
+}
+
+.ff-enter {
+  animation: ff-enter var(--ff-duration-enter) var(--ff-ease-out) both;
+  animation-delay: calc(min(var(--ff-i, 0), 8) * var(--ff-stagger-step));
+}
+.ff-spin {
+  animation: ff-spin 900ms linear infinite;
+}
+.ff-press {
+  transition:
+    background-color var(--ff-duration-press) var(--ff-ease-out),
+    border-color var(--ff-duration-press) var(--ff-ease-out),
+    transform var(--ff-duration-press) var(--ff-ease-out);
+}
+.ff-press:active:not([aria-disabled='true']) {
+  transform: translateY(1px);
+}
+.ff-lift {
+  transition:
+    transform var(--ff-duration-fast) var(--ff-ease-out),
+    box-shadow var(--ff-duration-fast) var(--ff-ease-out);
+}
+.ff-lift:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--ff-shadow-md);
+}
+.ff-chip {
+  transition:
+    background-color var(--ff-duration-fast) var(--ff-ease-out),
+    border-color var(--ff-duration-fast) var(--ff-ease-out);
+}
+.ff-skeleton {
+  background-color: var(--ff-border);
+  background-image: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgb(255 255 255 / 0.7) 50%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  animation: ff-shimmer var(--ff-duration-shimmer) linear infinite;
+}
+.ff-dialog[open] {
+  animation: ff-dialog-in var(--ff-duration-enter) var(--ff-ease-out) both;
+}
+.ff-dialog::backdrop {
+  background: rgb(32 41 73 / 0.5);
+  animation: ff-fade-in var(--ff-duration-enter) var(--ff-ease-out) both;
+}
+.ff-toast {
+  animation: ff-toast-in var(--ff-duration-enter) var(--ff-ease-out) both;
+}
+.ff-highlight {
+  animation: ff-highlight 600ms var(--ff-ease-out) both;
+  box-shadow: inset 0 0 0 2px var(--ff-violet-700);
+}
+.ff-meter-seg {
+  transition: width var(--ff-duration-meter) var(--ff-ease-in-out);
+}
+.ff-hatch {
+  background-image: repeating-linear-gradient(
+    45deg,
+    var(--ff-border-strong) 0 2px,
+    var(--ff-border) 2px 6px
+  );
+}
+.ff-hatch-danger {
+  background-image: repeating-linear-gradient(
+    45deg,
+    var(--ff-coral-700) 0 3px,
+    var(--ff-coral-50) 3px 7px
+  );
+}
+.ff-tnum {
+  font-variant-numeric: tabular-nums;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ff-enter,
+  .ff-spin,
+  .ff-skeleton,
+  .ff-dialog[open],
+  .ff-dialog::backdrop,
+  .ff-toast {
+    animation: none;
+  }
+  .ff-press,
+  .ff-lift,
+  .ff-chip,
+  .ff-meter-seg {
+    transition: none;
+  }
+  .ff-press:active:not([aria-disabled='true']),
+  .ff-lift:hover {
+    transform: none;
+  }
+  .ff-highlight {
+    animation: none;
+    background-color: var(--ff-violet-50);
+  }
+}
+
+@media (forced-colors: active) {
+  :focus-visible {
+    outline-color: Highlight;
+  }
+  /* Meter segments must stay visible: system colours plus outlines (not colour alone). */
+  .ff-meter-seg {
+    forced-color-adjust: none;
+    background-color: Highlight;
+    border: 1px solid CanvasText;
+  }
+  .ff-hatch,
+  .ff-hatch-danger {
+    background-image: none;
+    background-color: Canvas;
+    border: 1px dashed CanvasText;
+  }
+  .ff-hatch-danger {
+    border: 2px solid CanvasText;
+  }
+  .ff-bordered {
+    border: 1px solid ButtonText;
+  }
+}
