@@ -42,6 +42,7 @@ P0 has created all of the above. Exact commands and prerequisites are in `README
 - `pnpm db:up` uses `scripts/compose.sh`, which picks `docker compose` or standalone `docker-compose`. With Colima, run `colima start` first.
 - A first-time Postgres volume also creates `funfriday_test` (via `infra/postgres/init/`). If your volume predates this, create it once: `docker exec funfriday-dev-postgres-1 psql -U funfriday_dev -d funfriday_dev -c 'CREATE DATABASE funfriday_test'`.
 - Prisma 7 does not auto-run `generate` or seeding; turbo runs `db:generate` before API build/lint/typecheck/test.
+- `pnpm db:migrate` **applies** committed migrations (`prisma migrate deploy`); it never generates or drops anything. To author a new migration use `pnpm --filter @funfriday/api db:migrate:new -- --name <change>` (creates SQL only), then review it: some constraints live only in hand-written SQL (live-session partial unique index on `room_code`, `ON DELETE SET NULL (host_membership_id)`, CHECK constraints) and Prisma may propose dropping them - never commit such drops.
 - pnpm 11 blocks dependency build scripts and very new releases by policy; see comments in `pnpm-workspace.yaml` before changing either.
 - Allow ~4 GB free disk for dependencies, Playwright Chromium, images and builds.
 
