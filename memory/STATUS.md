@@ -1,7 +1,7 @@
 # Project Status
 
 **As of:** 2026-10-16
-**Current phase:** P2 - Identity, organisations and tenancy -> **GO for P3** (pending first CI run of this commit). P3 not started.
+**Current phase:** P2 - Identity, organisations and tenancy -> **GO for P3** (local + GitHub CI run 38855532097). P3 not started.
 **Build status:** All checks pass locally (320 unit, 158 integration, 207 E2E across Chromium/Firefox/WebKit). Code at github.com/Vikaschd04/FunFriday (`main`).
 
 ## What works now (try it: `docs/LOCAL_TESTING.md`)
@@ -31,7 +31,7 @@
 
 ## Last test evidence
 
-`docs/phases/P2_IDENTITY_TENANCY.md` -> Gate report (2026-10-16 10:47-10:52 IST, cache disabled). Earlier: P1 CI run 38773479161, P0 CI run 38758446713.
+`docs/phases/P2_IDENTITY_TENANCY.md` -> Gate report (2026-10-16 10:47-10:52 IST, cache disabled). GitHub CI P2: run 38855532097 (all steps). Earlier: P1 CI run 38773479161, P0 CI run 38758446713.
 
 ## Local environment notes
 

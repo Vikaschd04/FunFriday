@@ -46,7 +46,7 @@
 - [x] Mutations with a foreign `Origin` are rejected; auth endpoints rate-limited.
 - [x] Nonce-based CSP with no `'unsafe-inline'` scripts; no violations in E2E.
 - [x] E2E: two users in separate browser contexts - admin creates org, adds member, member verifies via dev mailbox and sees the org; participant gets denied states; signed-out `/app` redirects to sign-in.
-- [~] Lint/typecheck/unit/build/integration/E2E (3 browsers) green locally; CI recorded below after push.
+- [x] Lint/typecheck/unit/build/integration/E2E (3 browsers) green locally and in GitHub CI ([run 38855532097](https://github.com/Vikaschd04/FunFriday/actions/runs/38855532097)).
 
 ## Risks
 
@@ -67,7 +67,7 @@
 | E2E Chromium + Firefox + WebKit | PASS | 207/207 (69 per browser), 0 flaky in final run: sign-up/in/out, invitation links, two-user tenancy, denied/not-found, axe WCAG 2.2 AA on every screen at 320 + 1440, nonce CSP, hydration safety |
 | Security review | PASS after fixes | 2 stop-ship (pre-hijack, placeholder secret) + 6 medium/low fixed; no IDOR found |
 | Accessibility review | PASS (no blockers) | 3 medium + 3 low fixed; manual screen reader / zoom / forced colours NOT RUN |
-| GitHub CI | see below | recorded after push |
+| GitHub CI | PASS | [run 38855532097](https://github.com/Vikaschd04/FunFriday/actions/runs/38855532097) on `7cc0621`: 23/23 steps (report upload skipped) in 9.4 min |
 
 ### Defects found and fixed in P2
 
@@ -92,4 +92,4 @@
 
 ### Gate decision
 
-**GO for P3 pending CI.** All mandatory checks pass locally; both stop-ship security findings fixed and proven by tests; no open critical/high defects. Nothing deployed (D009).
+**GO for P3.** All mandatory checks pass locally and in GitHub CI; both stop-ship security findings fixed and proven by tests; no open critical/high defects. Nothing deployed (D009).
