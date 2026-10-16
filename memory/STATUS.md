@@ -1,7 +1,7 @@
 # Project Status
 
 **As of:** 2026-10-16
-**Current phase:** P4 - Realtime core + This or That -> **GO for P5** (pending first CI run of this commit). Order is games-first (D027): next P5 (Emoji Check-In, Trivia Rush), then P6, then P3.
+**Current phase:** P4 - Realtime core + This or That -> **GO for P5** (local + GitHub CI run 38887267385). Order is games-first (D027): next P5 (Emoji Check-In, Trivia Rush), then P6, then P3.
 **Build status:** All checks pass locally (407 unit, 219 integration, 219 E2E across Chromium/Firefox/WebKit; 20-client load smoke p95 < 40 ms). Code at github.com/Vikaschd04/FunFriday (`main`).
 
 ## What works now (try it: `docs/LOCAL_TESTING.md` section 3c)
@@ -30,7 +30,7 @@
 
 ## Last test evidence
 
-`docs/phases/P4_REALTIME_THIS_OR_THAT.md` -> Gate report (2026-10-16). Earlier: P2 CI run 38855532097, P1 38773479161, P0 38758446713.
+`docs/phases/P4_REALTIME_THIS_OR_THAT.md` -> Gate report (2026-10-16). GitHub CI P4: run 38887267385. Earlier: P2 CI run 38855532097, P1 38773479161, P0 38758446713.
 
 ## Local environment notes
 

@@ -40,7 +40,7 @@ A Host or Admin presses **Start a live session**, shares a 6-character room code
 - [x] Redis unavailable -> actions rejected with SERVICE_UNAVAILABLE, never a false "accepted".
 - [x] Browser E2E (3 browsers): host + 2 participants in separate contexts play 2 rounds end to end; keyboard-only answering; axe clean; 320px; reduced motion.
 - [x] Load smoke: 20 clients, p95 action-ack <= 250 ms and broadcast propagation <= 500 ms on localhost (measured, not claimed).
-- [~] All existing checks green locally; CI recorded below after push.
+- [x] All existing checks green locally and in GitHub CI ([run 38887267385](https://github.com/Vikaschd04/FunFriday/actions/runs/38887267385)).
 
 ## Risks
 
@@ -63,7 +63,7 @@ A Host or Admin presses **Start a live session**, shares a 6-character room code
 | Load smoke `pnpm test:load:live` | PASS | 20 clients x3 runs: answer-ack p95 25-33 ms, reveal propagation p95 27-36 ms, exact counts, identical revision sequences; 50 clients (informational) p95 154 / 165 ms |
 | Security review | PASS (no stop-ship) | 7 hardening fixes applied with tests |
 | Accessibility review | PASS after fixes | 2 High (single-key shortcuts, timing) + 5 Medium fixed; manual screen reader / 200% zoom / forced colours NOT RUN |
-| GitHub CI | see below | recorded after push |
+| GitHub CI | PASS | [run 38887267385](https://github.com/Vikaschd04/FunFriday/actions/runs/38887267385) on `f684db8`: 23/23 steps (report upload skipped) in 11.5 min, 3-browser E2E + both load smokes |
 
 ### Defects found and fixed in P4
 
@@ -91,4 +91,4 @@ A Host or Admin presses **Start a live session**, shares a 6-character room code
 
 ### Gate decision
 
-**GO for P5 pending CI.** Real-time This or That is playable end to end by organisation members in separate browsers, server-authoritative and measured; no open critical/high defects. Nothing deployed (D009).
+**GO for P5.** Verified locally and in GitHub CI. Real-time This or That is playable end to end by organisation members in separate browsers, server-authoritative and measured; no open critical/high defects. Nothing deployed (D009).
