@@ -3,6 +3,8 @@ import { NestFactory } from '@nestjs/core';
 import type { NestExpressApplication } from '@nestjs/platform-express';
 import { API_PREFIX } from '@funfriday/contracts';
 import helmet from 'helmet';
+import { LiveIoAdapter } from './modules/live/live-io.adapter.js';
+import type { Clock } from './modules/live/clock.js';
 import { AppModule } from './app.module.js';
 import { CLIENT_IP_HEADER } from './common/http/request-context.js';
 import { AUTH_BASE_PATH } from './modules/auth/auth-options.js';
@@ -14,17 +16,22 @@ import type { AppConfig } from './config/app-config.js';
 
 export interface CreateAppOptions {
   logger?: false | LogLevel[];
+  /** Test seam: drives server-side deadlines. */
+  clock?: Clock;
 }
 
 export async function createApp(
   config: AppConfig,
   options: CreateAppOptions = {},
 ): Promise<NestExpressApplication> {
-  const app = await NestFactory.create<NestExpressApplication>(AppModule.forRoot(config), {
-    logger: options.logger ?? ['log', 'warn', 'error'],
-    // Body parsing is registered manually in configureApp: the auth handler must see the raw stream.
-    bodyParser: false,
-  });
+  const app = await NestFactory.create<NestExpressApplication>(
+    AppModule.forRoot(config, { clock: options.clock }),
+    {
+      logger: options.logger ?? ['log', 'warn', 'error'],
+      // Body parsing is registered manually in configureApp: the auth handler must see the raw stream.
+      bodyParser: false,
+    },
+  );
   configureApp(app, config);
   return app;
 }
@@ -81,6 +88,7 @@ export function configureApp(app: NestExpressApplication, config: AppConfig): vo
       authHandler,
     );
   app.useBodyParser('json', { limit: '100kb' });
+  app.useWebSocketAdapter(new LiveIoAdapter(app, config));
   app.setGlobalPrefix(API_PREFIX);
   app.useGlobalFilters(new AllExceptionsFilter());
   app.enableShutdownHooks();

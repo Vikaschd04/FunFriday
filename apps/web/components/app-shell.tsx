@@ -179,6 +179,19 @@ function ShellFrame({ children }: { children: ReactNode }) {
       clearTimeout(timer);
     };
   }, [pathname]);
+  // Live sessions run in focus mode: no sidebar or tab bar, the room supplies its own header
+  // and (for hosts) a sticky control bar.
+  if (pathname.startsWith('/app/live/')) {
+    return (
+      <UnsavedGuardProvider>
+        <main id="main" tabIndex={-1} className="min-h-dvh px-4 pt-4 pb-6 md:px-6 lg:px-8">
+          <div className="ff-route mx-auto w-full max-w-6xl">
+            <SessionGate>{children}</SessionGate>
+          </div>
+        </main>
+      </UnsavedGuardProvider>
+    );
+  }
   return (
     <UnsavedGuardProvider>
       <div className="min-h-dvh">

@@ -211,3 +211,31 @@ export async function joinOrganizationViaApi(member: Actor, _orgId: string): Pro
   });
   expect(accepted.status(), await accepted.text()).toBe(200);
 }
+
+/**
+ * Admin (the host) plus `count` participant members of one organisation, each in their own
+ * browser context with a live session cookie. Used by the multi-browser live-session tests.
+ */
+export async function seedOrgWithMembers(
+  browser: Browser,
+  baseURL: string,
+  count: number,
+  orgName = 'Acme (fictional)',
+): Promise<{ admin: Actor; members: Actor[]; orgId: string }> {
+  const admin = await newActor(browser, baseURL, 'Admin Ana');
+  await verifyEmailViaApi(admin.context.request, admin.user.email);
+  const org = await createOrgViaApi(admin.context.request, orgName);
+  const names = ['Member Mia', 'Member Noor', 'Member Omar', 'Member Pia'];
+  const members: Actor[] = [];
+  for (let i = 0; i < count; i += 1) {
+    const member = await newActor(browser, baseURL, names[i] ?? `Member ${i}`);
+    const added = await admin.context.request.post(`${API_BASE}/organizations/${org.id}/members`, {
+      headers: apiHeaders(),
+      data: { email: member.user.email, role: 'participant' },
+    });
+    expect(added.status(), await added.text()).toBeLessThan(300);
+    await joinOrganizationViaApi(member, org.id);
+    members.push(member);
+  }
+  return { admin, members, orgId: org.id };
+}

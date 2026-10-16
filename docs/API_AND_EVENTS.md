@@ -94,6 +94,20 @@
 
 Cross-cutting: no session -> 401; non-member / unknown / malformed id -> 404; wrong role -> 403; state-changing requests carrying any cookie need an allow-listed `Origin` (403 otherwise); 300 req/min/IP (health exempt); malformed JSON 400, body over 100 kB 413 (auth routes: 64 KiB, chunked bodies 411); auth: sign-in/sign-up 5/min, send-verification-email 3/min; update-user accepts `name` only.
 
+### Live sessions and realtime (P4, ADR 0003)
+
+| Verb / event | Route / name | Access | Notes |
+| --- | --- | --- | --- |
+| POST | `/api/v1/organizations/:orgId/sessions` | Admin, Host | Creates a lobby with a 6-character room code (discovery only) |
+| GET | `/api/v1/organizations/:orgId/sessions` | Any member | Sessions not yet ended; `host` is null if the host left the org |
+| POST | `/api/v1/sessions/join-by-code` | Session | `{code}` -> `{sessionId, organizationId}`; 404 for unknown code or non-member; 10/min per IP and per user |
+| Socket.IO | namespace `/live` | Session cookie + allow-listed Origin | Handshake errors `UNAUTHENTICATED` / `FORBIDDEN` / `RATE_LIMITED` (5 sockets per user) |
+| client -> server | `session:join`, `participant:ready`, `host:command`, `game:action`, `room:resync` | Joined member | Zod-validated; ack `{status: accepted / duplicate / rejected, revision, code?}`; `clientActionId` dedupe; 10 events/s per socket and per user |
+| server -> client | `room:state` | Joined member | `{revision, serverNow, view}` - full role-redacted view after every change; clients keep the highest revision |
+| host commands | `start_game`, `close_round`, `extend_round` (+15 s), `next_round` (skips during a question), `pause`, `resume`, `end_game`, `end_session` | Session host or org Admin | Re-checked against Postgres inside the room queue -> `NOT_HOST` |
+
+Room authority: one serialized actor per session runs `packages/game-core` rules, writes the Redis snapshot before acknowledging (no false acks), then broadcasts. Snapshots are schema-validated on load; members start disconnected after a restart; effects (`GameResult`, session status) are idempotent and reconciled.
+
 Every response carries `x-request-id` (caller value kept only if `^[A-Za-z0-9._-]{1,64}$`).
 
 ## Ordering, dedupe and acks

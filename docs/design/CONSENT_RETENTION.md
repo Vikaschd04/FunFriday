@@ -10,6 +10,8 @@ Status: model accepted in P2. Implemented incrementally: `Organization.retention
 | Audit log | 365 days | platform default (P8 job) | Ids + action names only, no free text |
 | Live game content (captions, guesses, strokes, check-in picks) | `Organization.retentionDays` (default 90) after the session | org setting (Admin, later phase) | Aggregates kept; individual picks for Emoji Check-In are **never** stored per person |
 | Session results (aggregates, scores where the game permits) | `retentionDays` | org setting | No individual mood or performance history |
+| Live room snapshot (Redis, P4) | 6 hours after the last change (TTL) | platform | Holds per-person answers so reconnects and restarts keep state; never exposed in views, logs or `GameResult`. Redis must be private and access-controlled |
+| `GameResult` (P4) | `retentionDays` | org setting | Aggregate counts and highlights only |
 | Guest participant rows | Anonymised after `retentionDays` | - | See `GUEST_IDENTITY.md` |
 | Dev mailbox messages | 7 days, local only | - | Never enabled in production |
 | Event drafts (P1) | Browser storage, user-controlled | - | Moves to the API in P3 |

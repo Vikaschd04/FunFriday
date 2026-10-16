@@ -46,6 +46,21 @@ No real email is sent. Verification messages land in a local **dev mailbox** at 
 
 Two windows in the same normal browser profile share one session; use a private window or a different browser for the second person.
 
+### 3c. Play This or That live (P4)
+
+You need at least two people (two browsers or a private window), both members of the same organisation (see 3a).
+
+| Try this | You should see |
+| --- | --- |
+| As Admin/Host on the dashboard: **Start a live session** | A lobby with a big 6-character room code |
+| Second person: dashboard -> **Join with a code** (lowercase and spaces are fine) | They appear in the lobby roster; "I'm ready" shows for everyone |
+| Host: choose rounds/seconds and **Start** This or That | Everyone sees the same question and countdown |
+| Answer with the buttons or keys **1** / **2** / **0** (Pass) | "N of M answered" updates on every screen; you can change your answer until time is up |
+| Host: **+15 s**, **Pause/Resume**, **Close round** | Countdown changes for everyone at once |
+| Reveal | Counts and percentages for the group - never who chose what |
+| Reload a participant's page mid-round | They come back to the same round with their answer kept |
+| Host: **Finish** | Summary with "most united moment" and "closest split"; **Play again** or **End session** |
+
 ### 3b. Planning (P1)
 
 Everything below runs on real data from your local API. Event plans are still saved **in your browser only** (server-saved events arrive in P3).

@@ -21,6 +21,7 @@ import {
 } from '../../../common/errors/domain.exception.js';
 import type { Prisma } from '../../../generated/prisma/client.js';
 import { APP_CONFIG, type AppConfig } from '../../../config/app-config.js';
+import { LiveAccessPort } from '../../live/live-access.port.js';
 import { MailerPort } from '../../mail/mailer.port.js';
 import { PrismaService } from '../../../infra/database/prisma.service.js';
 import {
@@ -62,6 +63,7 @@ export class MembersService {
     private readonly prisma: PrismaService,
     private readonly audit: AuditService,
     private readonly mailer: MailerPort,
+    private readonly liveAccess: LiveAccessPort,
     @Inject(APP_CONFIG) private readonly config: AppConfig,
   ) {}
 
@@ -153,6 +155,7 @@ export class MembersService {
     memberId: string,
     role: OrgRole,
   ): Promise<Member> {
+    let roleChanged = false;
     const row = await this.prisma.$transaction(async (tx) => {
       const activeAdmins = await this.lockActiveAdmins(tx, organizationId);
       const target = await tx.membership.findFirst({ where: { id: memberId, organizationId } });
@@ -170,6 +173,7 @@ export class MembersService {
           throw new LastAdminException();
         }
         await tx.membership.update({ where: { id: target.id }, data: { role: newRole } });
+        roleChanged = true;
         await this.audit.record(tx, {
           organizationId,
           actorUserId,
@@ -184,6 +188,12 @@ export class MembersService {
         include: withUser,
       });
     });
+    // After commit; a live-room hiccup must never fail the HTTP change.
+    if (roleChanged) {
+      await this.liveAccess.memberRoleChanged(organizationId, memberId).catch(() => {
+        this.logger.error(`live role refresh failed member=${memberId}`);
+      });
+    }
     return toMember(row, true);
   }
 
@@ -212,6 +222,9 @@ export class MembersService {
         targetId: target.id,
         metadata: { role: toContractRole(target.role) },
       });
+    });
+    await this.liveAccess.memberRemoved(organizationId, memberId).catch(() => {
+      this.logger.error(`live revoke failed member=${memberId}`);
     });
   }
 

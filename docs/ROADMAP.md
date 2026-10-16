@@ -4,6 +4,10 @@
 
 Two to three experienced engineers, part-time design/QA and selective specialists. Estimate **16-22 weeks** to reach a pilot-worthy MVP, not a contractual delivery date. Add time for integrations, user testing, procurement, brand legal review and enterprise security. Build only one verified vertical slice at a time.
 
+## Execution order (D027, owner direction 2026-10-16)
+
+**P0 -> P1 -> P2 -> P4 -> P5 -> P6 -> P3 -> P7 -> P8 -> P9.** Games come before scheduling: live sessions start ad hoc for organisation members; P3 later adds scheduled events, guest invitations, RSVP and ICS on top of sessions. Phase numbers are kept so existing references stay valid.
+
 ## Phase matrix
 
 | Phase | Target duration | Primary owner(s) | Goal | Gate |
@@ -63,15 +67,15 @@ Some phases can overlap in design/prototyping; dependent implementation steps re
 - [ ] Email provider adapter / safe no-provider fallback.
 - [ ] Playwright host planning journey + API persistence.
 
-### P4 - Realtime Core [not started]
-- [ ] Room ownership actor and authoritative state machine ADR.
-- [ ] Socket join/leave, presence, ready status, host/c-host controls.
-- [ ] Server deadline/time synchronization, idempotent actions, revision.
-- [ ] Persistent checkpoints, redacted reconnect snapshots, cleanup.
-- [ ] 20-client room smoke tests incl host loss + network drop.
+### P4 - Realtime Core + first game (This or That) [GO - see docs/phases/P4_REALTIME_THIS_OR_THAT.md]
+- [x] Room ownership actor and authoritative state machine ADR.
+- [x] Socket join/leave, presence, ready status, host/c-host controls.
+- [x] Server deadline/time synchronization, idempotent actions, revision.
+- [x] Persistent checkpoints, redacted reconnect snapshots, cleanup.
+- [x] 20-client room smoke tests incl host loss + network drop.
 
 ### P5 - Games I [not started]
-- [ ] This or That implemented end-to-end (first true vertical slice).
+- [x] This or That implemented end-to-end (first true vertical slice) - delivered in P4.
 - [ ] Emoji Check-In inclusive, anonymous aggregate behavior.
 - [ ] Trivia Rush individual/team, protected answers, scoring/ties.
 - [ ] Original safe prompt packs and content versioning.

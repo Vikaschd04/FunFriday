@@ -6,6 +6,8 @@
 html {
   /* Keeps focused fields clear of the sticky action bar and mobile tab bar (WCAG 2.4.11). */
   scroll-padding-bottom: 10rem;
+  /* Keeps focused controls clear of the sticky live-room connection banner. */
+  scroll-padding-top: 5rem;
   background: var(--ff-canvas);
   color: var(--ff-ink);
   -webkit-text-size-adjust: 100%;
@@ -47,5 +49,193 @@ h3:focus-visible {
 @media (prefers-reduced-motion: reduce) {
   .ff-route {
     animation: none;
+  }
+}
+
+/* ---- Live sessions (docs/design/P4_LIVE_SCREENS.md). All motion is off under reduced motion. ---- */
+
+.ff-code {
+  font-family: var(--font-jakarta), 'Plus Jakarta Sans', system-ui, sans-serif;
+  font-weight: 800;
+  font-size: 52px;
+  line-height: 60px;
+  letter-spacing: 0.08em;
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'ss01' 0;
+  overflow-wrap: normal;
+  user-select: all;
+}
+@media (min-width: 768px) {
+  .ff-code {
+    font-size: 72px;
+    line-height: 80px;
+    letter-spacing: 0.12em;
+  }
+}
+@media (min-width: 1280px) {
+  .ff-code {
+    font-size: 96px;
+    line-height: 100px;
+  }
+}
+
+.ff-timer-numeral {
+  font-family: var(--font-jakarta), 'Plus Jakarta Sans', system-ui, sans-serif;
+  font-weight: 800;
+  font-size: 40px;
+  line-height: 44px;
+  font-variant-numeric: tabular-nums;
+}
+@media (min-width: 1024px) {
+  .ff-timer-numeral {
+    font-size: 56px;
+    line-height: 60px;
+  }
+}
+
+/* Bars: A solid, B hatched, Pass dotted - they differ by texture, not only by hue. */
+.ff-bar-a {
+  background: var(--ff-violet-700);
+}
+.ff-bar-b {
+  background-color: var(--ff-coral-50);
+  background-image: repeating-linear-gradient(
+    45deg,
+    var(--ff-coral-700) 0 4px,
+    var(--ff-coral-50) 4px 8px
+  );
+}
+.ff-bar-pass {
+  background-color: var(--ff-border);
+  background-image: radial-gradient(var(--ff-muted) 1.5px, transparent 1.5px);
+  background-size: 8px 8px;
+}
+.ff-bar-fill {
+  animation: ff-bar-grow var(--ff-duration-meter) var(--ff-ease-in-out) both;
+  animation-delay: calc(var(--ff-i, 0) * 80ms);
+}
+@keyframes ff-bar-grow {
+  from {
+    width: 0;
+  }
+}
+.ff-timer-bar {
+  transition: width 260ms linear;
+}
+@keyframes ff-pulse-num {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.06);
+  }
+}
+.ff-urgent-num {
+  animation: ff-pulse-num 1s var(--ff-ease-in-out) infinite;
+}
+@keyframes ff-pop {
+  from {
+    transform: scale(0.9);
+    opacity: 0.6;
+  }
+}
+.ff-pop {
+  animation: ff-pop var(--ff-duration-fast) var(--ff-ease-out) both;
+}
+@keyframes ff-sheet-in {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+}
+.ff-sheet {
+  animation: ff-sheet-in var(--ff-duration-enter) var(--ff-ease-out) both;
+}
+@keyframes ff-banner-in {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+}
+.ff-banner {
+  animation: ff-banner-in var(--ff-duration-enter) var(--ff-ease-out) both;
+}
+@keyframes ff-dot {
+  0%,
+  80%,
+  100% {
+    opacity: 0.25;
+  }
+  40% {
+    opacity: 1;
+  }
+}
+.ff-dot {
+  animation: ff-dot 1.4s ease-in-out infinite;
+}
+.ff-dot:nth-child(2) {
+  animation-delay: 0.2s;
+}
+.ff-dot:nth-child(3) {
+  animation-delay: 0.4s;
+}
+.ff-phase {
+  animation: ff-fade-in var(--ff-duration-enter) var(--ff-ease-out) both;
+}
+
+/* One-time celebration: 12 particles, <= 1.5s, decorative. */
+@keyframes ff-confetti {
+  from {
+    opacity: 1;
+    transform: translate(0, 0) scale(0.6);
+  }
+  to {
+    opacity: 0;
+    transform: translate(var(--dx), var(--dy)) scale(1);
+  }
+}
+.ff-confetti > span {
+  position: absolute;
+  left: 50%;
+  top: 40%;
+  width: 10px;
+  height: 10px;
+  border-radius: 9999px;
+  animation: ff-confetti 1.4s var(--ff-ease-out) both;
+  animation-delay: calc(var(--i) * 30ms);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ff-bar-fill,
+  .ff-urgent-num,
+  .ff-pop,
+  .ff-sheet,
+  .ff-banner,
+  .ff-dot,
+  .ff-phase {
+    animation: none;
+  }
+  .ff-timer-bar {
+    transition: none;
+  }
+  .ff-confetti {
+    display: none;
+  }
+  .ff-dot {
+    opacity: 0.6;
+  }
+}
+
+@media (forced-colors: active) {
+  .ff-bar-a,
+  .ff-bar-b,
+  .ff-bar-pass {
+    forced-color-adjust: none;
+    background-color: Highlight;
+    background-image: none;
+  }
+  .ff-bar-b {
+    background-image: repeating-linear-gradient(45deg, Canvas 0 4px, Highlight 4px 8px);
   }
 }

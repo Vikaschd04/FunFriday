@@ -7,13 +7,15 @@ import { InfraModule } from './infra/infra.module.js';
 import { ActivitiesModule } from './modules/activities/activities.module.js';
 import { AuthModule } from './modules/auth/auth.module.js';
 import { IdentityModule } from './modules/identity/identity.module.js';
+import { LiveModule } from './modules/live/live.module.js';
+import type { Clock } from './modules/live/clock.js';
 import { MailModule } from './modules/mail/mail.module.js';
 import { HealthModule } from './modules/health/health.module.js';
 
 @Module({})
 export class AppModule {
   /** Config is parsed once at bootstrap and injected, so tests can supply their own. */
-  static forRoot(config: AppConfig): DynamicModule {
+  static forRoot(config: AppConfig, options: { clock?: Clock } = {}): DynamicModule {
     return {
       module: AppModule,
       global: true,
@@ -33,6 +35,7 @@ export class AppModule {
         HealthModule,
         ActivitiesModule,
         IdentityModule,
+        LiveModule.register(options.clock),
       ],
     };
   }

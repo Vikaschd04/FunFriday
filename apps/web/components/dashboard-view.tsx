@@ -19,6 +19,7 @@ import { formatWallTime } from '@/lib/time-format';
 import { AppLinkButton } from './app-link-button';
 import { EmptyMotif } from './motifs';
 import { OnboardingCard, VerifyEmailNotice } from './dashboard-account';
+import { LiveEntry } from './live-entry';
 import { useCurrentMembership, useMe } from './session-provider';
 
 type Load =
@@ -166,6 +167,8 @@ export function DashboardView({
       <VerifyEmailNotice />
 
       {me.memberships.length === 0 && <OnboardingCard />}
+
+      <LiveEntry />
 
       <Notice tone="info" title="Drafts stay on this device">
         Your plans are not shared with your organisation yet. Sharing arrives in a later release.

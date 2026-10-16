@@ -38,6 +38,12 @@ Only add reproducible, cross-session knowledge that saves future work. No redund
 - 2026-10-16 | Intermittent pg "connection timeout" 500s under parallel sign-ups | scrypt hashing fills the 4-thread libuv pool that `localhost` DNS lookups for new connections also need | Cap concurrent hashing; raise connect timeout; reproduce under CPU contention | `apps/api/src/common/concurrency/limiter.ts`
 - 2026-10-16 | Invitation auto-claim by verified email | Verification proves inbox control only if the verifier also owns the account; pre-registered accounts break that | Join via a token sent to the inbox AND a session for that address | D026
 
+## P4 learnings (2026-10-16)
+
+- 2026-10-16 | Flaky "join never answers" in parallel E2E | Instrumented: trivial DB lookups took 0.3-1.1 s at host load avg ~17-20 on 8 cores (Postgres in a 2-CPU Colima VM); client gave up after one 5 s ack | Measure before raising timeouts; make the client retry a timed-out join once; keep E2E workers modest on laptops | `apps/web/lib/live/connection.ts`
+- 2026-10-16 | Rule changes ripple into clock-based tests | 15 s -> 20 s minimum broke deadline assertions in API recovery tests | Derive test clock math from the config constant, not literals | `apps/api/test/live-recovery.int.spec.ts`
+- 2026-10-16 | Parallel agents sharing build output | `nest build` deletes `dist`, racing other agents' running servers | Build once centrally and tell parallel agents not to rebuild shared artefacts | orchestration
+
 ## Follow-up template
 
 `YYYY-MM-DD | Trigger | Observed evidence | Reusable conclusion | Where applied`

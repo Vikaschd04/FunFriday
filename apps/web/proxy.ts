@@ -11,6 +11,9 @@ import { type NextRequest, NextResponse } from 'next/server';
 const SESSION_COOKIES = ['funfriday.session_token', '__Secure-funfriday.session_token'];
 const apiOrigin = new URL(process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://localhost:4000/api/v1')
   .origin;
+// Socket.IO live sessions connect to the same API origin over ws(s). Chromium does not treat an
+// http(s) source as covering ws(s), so the WebSocket origin is listed explicitly (P4).
+const apiSocketOrigin = apiOrigin.replace(/^http/, 'ws');
 
 export function buildContentSecurityPolicy(nonce: string, isDev: boolean): string {
   return [
@@ -19,7 +22,7 @@ export function buildContentSecurityPolicy(nonce: string, isDev: boolean): strin
     "style-src 'self' 'unsafe-inline'",
     "img-src 'self' data: blob:",
     "font-src 'self'",
-    `connect-src 'self' ${apiOrigin}${isDev ? ' ws://localhost:3000' : ''}`,
+    `connect-src 'self' ${apiOrigin} ${apiSocketOrigin}${isDev ? ' ws://localhost:3000' : ''}`,
     "frame-ancestors 'none'",
     "object-src 'none'",
     "base-uri 'self'",

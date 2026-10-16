@@ -141,9 +141,10 @@ model Organization {
   createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
   updatedAt     DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
 
-  memberships Membership[]
-  teams       Team[]
-  auditLogs   AuditLog[]
+  memberships  Membership[]
+  teams        Team[]
+  auditLogs    AuditLog[]
+  liveSessions LiveSession[]
 
   @@map("organizations")
 }
@@ -164,10 +165,12 @@ model Membership {
   inviteExpiresAt DateTime?        @map("invite_expires_at") @db.Timestamptz(3)
   invitedByUserId String?          @map("invited_by_user_id") @db.Uuid
 
-  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  user         User?        @relation("MembershipUser", fields: [userId], references: [id], onDelete: Cascade)
-  invitedBy    User?        @relation("MembershipInvitedBy", fields: [invitedByUserId], references: [id], onDelete: SetNull)
-  teamMembers  TeamMember[]
+  organization        Organization         @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  user                User?                @relation("MembershipUser", fields: [userId], references: [id], onDelete: Cascade)
+  invitedBy           User?                @relation("MembershipInvitedBy", fields: [invitedByUserId], references: [id], onDelete: SetNull)
+  teamMembers         TeamMember[]
+  hostedSessions      LiveSession[]        @relation("SessionHost")
+  sessionParticipants SessionParticipant[]
 
   @@unique([organizationId, userId])
   @@unique([organizationId, invitedEmail])
@@ -236,4 +239,72 @@ model NotificationOutbox {
 
   @@index([createdAt(sort: Desc)])
   @@map("notification_outbox")
+}
+
+// ---------------------------------------------------------------------------
+// P4 live sessions (ADR 0003). Hand-written SQL in the migration adds what Prisma cannot
+// express: the PARTIAL unique index on room_code (WHERE status <> 'ENDED') and CHECK constraints.
+// Use `prisma migrate deploy`; `migrate dev` would try to drop that partial index.
+// ---------------------------------------------------------------------------
+
+enum LiveSessionStatus {
+  LOBBY
+  LIVE
+  ENDED
+}
+
+model LiveSession {
+  id               String            @id @default(uuid()) @db.Uuid
+  organizationId   String            @map("organization_id") @db.Uuid
+  /// NULL after the host's membership is removed (DB-level ON DELETE SET NULL (host_membership_id)); Admins still control it.
+  hostMembershipId String?           @map("host_membership_id") @db.Uuid
+  title            String            @db.VarChar(60)
+  /// Discovery only, never authorisation. Unique among sessions that are not ENDED.
+  roomCode         String            @map("room_code") @db.Char(6)
+  status           LiveSessionStatus @default(LOBBY)
+  createdAt        DateTime          @default(now()) @map("created_at") @db.Timestamptz(3)
+  startedAt        DateTime?         @map("started_at") @db.Timestamptz(3)
+  endedAt          DateTime?         @map("ended_at") @db.Timestamptz(3)
+
+  organization Organization         @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  // Real action is hand-written in SQL (composite SET NULL on one column); Prisma cannot express it.
+  host         Membership?          @relation("SessionHost", fields: [organizationId, hostMembershipId], references: [organizationId, id], onDelete: NoAction)
+  participants SessionParticipant[]
+  results      GameResult[]
+
+  @@unique([organizationId, id])
+  @@index([organizationId, status, createdAt(sort: Desc)])
+  @@map("live_sessions")
+}
+
+model SessionParticipant {
+  id             String   @id @default(uuid()) @db.Uuid
+  organizationId String   @map("organization_id") @db.Uuid
+  sessionId      String   @map("session_id") @db.Uuid
+  membershipId   String   @map("membership_id") @db.Uuid
+  firstJoinedAt  DateTime @default(now()) @map("first_joined_at") @db.Timestamptz(3)
+
+  session    LiveSession @relation(fields: [organizationId, sessionId], references: [organizationId, id], onDelete: Cascade)
+  membership Membership  @relation(fields: [organizationId, membershipId], references: [organizationId, id], onDelete: Cascade)
+
+  @@unique([sessionId, membershipId])
+  @@index([organizationId, membershipId])
+  @@map("session_participants")
+}
+
+/// Aggregate summary only - never member ids or who chose what.
+model GameResult {
+  id             String   @id @default(uuid()) @db.Uuid
+  organizationId String   @map("organization_id") @db.Uuid
+  sessionId      String   @map("session_id") @db.Uuid
+  gameSlug       String   @map("game_slug") @db.VarChar(64)
+  startedAt      DateTime @map("started_at") @db.Timestamptz(3)
+  endedAt        DateTime @map("ended_at") @db.Timestamptz(3)
+  summary        Json
+
+  session LiveSession @relation(fields: [organizationId, sessionId], references: [organizationId, id], onDelete: Cascade)
+
+  @@unique([sessionId, startedAt])
+  @@index([organizationId, sessionId])
+  @@map("game_results")
 }
