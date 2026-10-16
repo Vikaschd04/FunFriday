@@ -18,6 +18,8 @@ import { deleteDraft, listDrafts, type DraftListItem, type StoredDraft } from '@
 import { formatWallTime } from '@/lib/time-format';
 import { AppLinkButton } from './app-link-button';
 import { EmptyMotif } from './motifs';
+import { OnboardingCard, VerifyEmailNotice } from './dashboard-account';
+import { useCurrentMembership, useMe } from './session-provider';
 
 type Load =
   | { state: 'loading' }
@@ -64,7 +66,15 @@ function pickUpNext(drafts: StoredDraft[], now: number): StoredDraft | null {
   return latest[0] ?? null;
 }
 
-export function DashboardView() {
+export function DashboardView({
+  verified = false,
+  joined = false,
+}: {
+  verified?: boolean;
+  joined?: boolean;
+}) {
+  const me = useMe();
+  const membership = useCurrentMembership();
   const [load, setLoad] = useState<Load>({ state: 'loading' });
   const [confirm, setConfirm] = useState<{ id: string; name: string } | null>(null);
   const [deleteError, setDeleteError] = useState(false);
@@ -132,12 +142,33 @@ export function DashboardView() {
           Your Fridays
         </h1>
         <p className="mt-1 text-ff-muted">
+          {membership ? (
+            <>
+              Signed in to <strong>{membership.org.name}</strong>.{' '}
+            </>
+          ) : null}
           Plans you save appear here. They live on this device only.
         </p>
       </header>
 
-      <Notice tone="info" title="Preview workspace" className="lg:hidden">
-        Accounts arrive in a later phase. Anything you save stays on this device.
+      {joined && membership && (
+        <Notice tone="success" announce title={`You joined ${membership.org.name}`}>
+          You can now see its members and teams.
+        </Notice>
+      )}
+
+      {verified && !me.needsEmailVerification && (
+        <Notice tone="success" announce title="Email verified">
+          Thanks. Your email address is now verified.
+        </Notice>
+      )}
+
+      <VerifyEmailNotice />
+
+      {me.memberships.length === 0 && <OnboardingCard />}
+
+      <Notice tone="info" title="Drafts stay on this device">
+        Your plans are not shared with your organisation yet. Sharing arrives in a later release.
       </Notice>
 
       {deleteError && (
@@ -229,7 +260,8 @@ export function DashboardView() {
             Drafts on this device ({items.length})
           </h2>
           <p className="mt-1 text-sm text-ff-muted">
-            Drafts are saved in this browser only. Clearing your browser data will remove them.
+            Drafts are saved in this browser only and are not shared with your organisation.
+            Clearing your browser data will remove them.
           </p>
           <ul className="mt-4 grid gap-4 lg:grid-cols-2">
             {items.map((item) => {

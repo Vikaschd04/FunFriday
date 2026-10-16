@@ -1,6 +1,5 @@
-// FunFriday persistent schema. P0 holds only the global activity catalog;
-// tenant-owned models (organizations, teams, events...) arrive in P2+ with
-// explicit orgId scoping. See docs/DATA_MODEL.md.
+// FunFriday persistent schema: global activity catalog (P0) and identity + tenancy (P2).
+// Tenant-owned models carry organizationId. See docs/DATA_MODEL.md.
 
 generator client {
   provider            = "prisma-client"
@@ -46,4 +45,195 @@ model ActivityDefinition {
 
   @@index([displayOrder])
   @@map("activity_definitions")
+}
+
+// ---------------------------------------------------------------------------
+// P2 identity + tenancy (ADR 0002).
+// User/Session/Account/Verification use Better Auth's exact field names
+// (guarded by test/schema-parity.int.spec.ts); tables are snake_case plural.
+// Everything below is tenant-owned and carries organizationId.
+// ---------------------------------------------------------------------------
+
+enum OrgRole {
+  ADMIN
+  HOST
+  PARTICIPANT
+}
+
+enum MembershipStatus {
+  INVITED
+  ACTIVE
+}
+
+model User {
+  id            String   @id @db.Uuid
+  name          String   @db.VarChar(80)
+  email         String   @unique @db.VarChar(254)
+  emailVerified Boolean  @default(false) @map("email_verified")
+  image         String?
+  createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt     DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  sessions        Session[]
+  accounts        Account[]
+  memberships     Membership[] @relation("MembershipUser")
+  invitationsSent Membership[] @relation("MembershipInvitedBy")
+  auditLogs       AuditLog[]
+
+  @@map("users")
+}
+
+model Session {
+  id        String   @id @db.Uuid
+  expiresAt DateTime @map("expires_at") @db.Timestamptz(3)
+  token     String   @unique
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(3)
+  ipAddress String?  @map("ip_address")
+  userAgent String?  @map("user_agent")
+  userId    String   @map("user_id") @db.Uuid
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("sessions")
+}
+
+model Account {
+  id                    String    @id @db.Uuid
+  accountId             String    @map("account_id")
+  providerId            String    @map("provider_id")
+  userId                String    @map("user_id") @db.Uuid
+  accessToken           String?   @map("access_token")
+  refreshToken          String?   @map("refresh_token")
+  idToken               String?   @map("id_token")
+  accessTokenExpiresAt  DateTime? @map("access_token_expires_at") @db.Timestamptz(3)
+  refreshTokenExpiresAt DateTime? @map("refresh_token_expires_at") @db.Timestamptz(3)
+  scope                 String?
+  /// scrypt hash written by Better Auth; never selected by our own queries.
+  password              String?
+  createdAt             DateTime  @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt             DateTime  @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("accounts")
+}
+
+model Verification {
+  id         String   @id @db.Uuid
+  identifier String
+  value      String
+  expiresAt  DateTime @map("expires_at") @db.Timestamptz(3)
+  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt  DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  @@index([identifier])
+  @@map("verifications")
+}
+
+model Organization {
+  id            String   @id @default(uuid()) @db.Uuid
+  slug          String   @unique @db.VarChar(48)
+  name          String   @db.VarChar(80)
+  retentionDays Int      @default(90) @map("retention_days")
+  createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt     DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  memberships Membership[]
+  teams       Team[]
+  auditLogs   AuditLog[]
+
+  @@map("organizations")
+}
+
+model Membership {
+  id              String           @id @default(uuid()) @db.Uuid
+  organizationId  String           @map("organization_id") @db.Uuid
+  /// Null until a user with a VERIFIED matching email claims the invitation (D022).
+  userId          String?          @map("user_id") @db.Uuid
+  /// Lower-cased (CHECK constraint). Only ever returned to Admins.
+  invitedEmail    String           @map("invited_email") @db.VarChar(254)
+  role            OrgRole
+  status          MembershipStatus
+  createdAt       DateTime         @default(now()) @map("created_at") @db.Timestamptz(3)
+  joinedAt        DateTime?        @map("joined_at") @db.Timestamptz(3)
+  /// SHA-256 (hex) of the one-time invitation token; the raw token only ever exists in the email (D026).
+  inviteTokenHash String?          @unique @map("invite_token_hash") @db.VarChar(64)
+  inviteExpiresAt DateTime?        @map("invite_expires_at") @db.Timestamptz(3)
+  invitedByUserId String?          @map("invited_by_user_id") @db.Uuid
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  user         User?        @relation("MembershipUser", fields: [userId], references: [id], onDelete: Cascade)
+  invitedBy    User?        @relation("MembershipInvitedBy", fields: [invitedByUserId], references: [id], onDelete: SetNull)
+  teamMembers  TeamMember[]
+
+  @@unique([organizationId, userId])
+  @@unique([organizationId, invitedEmail])
+  @@unique([organizationId, id])
+  @@index([userId])
+  @@index([invitedEmail])
+  @@map("memberships")
+}
+
+model Team {
+  id             String   @id @default(uuid()) @db.Uuid
+  organizationId String   @map("organization_id") @db.Uuid
+  name           String   @db.VarChar(60)
+  createdAt      DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  members      TeamMember[]
+
+  @@unique([organizationId, name])
+  @@unique([organizationId, id])
+  @@map("teams")
+}
+
+/// Composite FKs force team and membership to belong to the SAME organisation in the database.
+model TeamMember {
+  organizationId String   @map("organization_id") @db.Uuid
+  teamId         String   @map("team_id") @db.Uuid
+  membershipId   String   @map("membership_id") @db.Uuid
+  createdAt      DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+
+  team       Team       @relation(fields: [organizationId, teamId], references: [organizationId, id], onDelete: Cascade)
+  membership Membership @relation(fields: [organizationId, membershipId], references: [organizationId, id], onDelete: Cascade)
+
+  @@id([teamId, membershipId])
+  @@index([organizationId, membershipId])
+  @@map("team_members")
+}
+
+/// Ids, action names and role/team names only - never emails, passwords or tokens.
+model AuditLog {
+  id             String   @id @default(uuid()) @db.Uuid
+  organizationId String   @map("organization_id") @db.Uuid
+  actorUserId    String?  @map("actor_user_id") @db.Uuid
+  action         String   @db.VarChar(64)
+  targetType     String   @map("target_type") @db.VarChar(32)
+  targetId       String   @map("target_id") @db.Uuid
+  metadata       Json     @default("{}")
+  createdAt      DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  actor        User?        @relation(fields: [actorUserId], references: [id], onDelete: SetNull)
+
+  @@index([organizationId, createdAt(sort: Desc), id(sort: Desc)])
+  @@map("audit_logs")
+}
+
+/// Outbound mail queue. P2 only has the 'dev-mailbox' provider (no external sends).
+model NotificationOutbox {
+  id        String   @id @default(uuid()) @db.Uuid
+  recipient String   @db.VarChar(254)
+  subject   String   @db.VarChar(200)
+  body      String
+  provider  String   @db.VarChar(32)
+  status    String   @db.VarChar(32)
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+
+  @@index([createdAt(sort: Desc)])
+  @@map("notification_outbox")
 }

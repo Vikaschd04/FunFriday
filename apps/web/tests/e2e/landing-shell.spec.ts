@@ -1,4 +1,5 @@
-import { expect, test, type Page } from '@playwright/test';
+import type { Page } from '@playwright/test';
+import { expect, test } from './fixtures';
 import { expectNoHorizontalScroll, expectNoSeriousAxeViolations } from './helpers';
 
 const operational = (page: Page) => page.getByText('All systems operational', { exact: true });
@@ -14,16 +15,21 @@ test.describe('landing', () => {
     await expect(
       page.getByText('Illustration of the planner. Sample plan is fictional.'),
     ).toBeVisible();
-    await expect(page.getByRole('link', { name: /sign in|join with a code/i })).toHaveCount(0);
+    // P2: a real sign-in link exists; joining with a code is still not offered.
+    await expect(page.getByRole('link', { name: 'Sign in' })).toHaveAttribute('href', '/sign-in');
+    await expect(page.getByRole('link', { name: /join with a code/i })).toHaveCount(0);
   });
 
   test('CTAs navigate', async ({ page }) => {
     await page.goto('/');
     await page.getByRole('main').getByRole('link', { name: 'Plan a FunFriday' }).click();
     await expect(page).toHaveURL(/\/app\/events\/new$/);
+    // Let each screen finish loading before a full navigation interrupts it.
+    await expect(page.getByRole('heading', { level: 1, name: 'Plan a FunFriday' })).toBeVisible();
     await page.goto('/');
     await page.getByRole('link', { name: 'Explore activities' }).first().click();
     await expect(page).toHaveURL(/\/app\/library$/);
+    await expect(page.getByRole('heading', { level: 1, name: 'Activities' })).toBeVisible();
     await page.goto('/');
     await page.getByRole('link', { name: 'System status' }).click();
     await expect(page).toHaveURL(/\/status$/);
@@ -102,7 +108,9 @@ test.describe('app shell', () => {
       'aria-current',
     );
     await expect(page.getByRole('link', { name: 'Plan a FunFriday' }).first()).toBeVisible();
-    await expect(page.getByText('Preview workspace').filter({ visible: true })).toHaveCount(1);
+    await expect(
+      page.getByRole('button', { name: 'Account and workspace menu' }).filter({ visible: true }),
+    ).toHaveCount(1);
   });
 
   test('rail with visible labels at 900', async ({ page }) => {

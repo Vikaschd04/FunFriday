@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from 'next';
+import { connection } from 'next/server';
 import { Inter, Plus_Jakarta_Sans } from 'next/font/google';
 import type { ReactNode } from 'react';
 import { LiveRegionProvider, SkipLink } from '@funfriday/ui';
@@ -32,7 +33,9 @@ export const viewport: Viewport = {
   initialScale: 1,
 };
 
-export default function RootLayout({ children }: { children: ReactNode }) {
+export default async function RootLayout({ children }: { children: ReactNode }) {
+  // Per-request rendering so proxy.ts's CSP nonce reaches every framework script.
+  await connection();
   return (
     <html lang="en" className={`${jakarta.variable} ${inter.variable}`}>
       <body>

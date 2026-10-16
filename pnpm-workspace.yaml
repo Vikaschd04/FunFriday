@@ -32,6 +32,14 @@ minimumReleaseAgeExclude:
   - next@16.4.1
   - react-dom@19.3.1
   - react@19.3.1
+  - '@better-auth/core@1.7.8'
+  - '@better-auth/drizzle-adapter@1.7.8'
+  - '@better-auth/kysely-adapter@1.7.8'
+  - '@better-auth/memory-adapter@1.7.8'
+  - '@better-auth/mongo-adapter@1.7.8'
+  - '@better-auth/prisma-adapter@1.7.8'
+  - '@better-auth/telemetry@1.7.8'
+  - better-auth@1.7.8
 
 # Security overrides (pnpm audit, 2026-10-15). Both packages are pulled in only
 # by Prisma's CLI/config loader (dev + migration tooling, not request handling).

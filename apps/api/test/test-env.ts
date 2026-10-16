@@ -13,5 +13,14 @@ export function resolveTestEnv(): Record<string, string | undefined> {
   if (testDatabaseUrl === process.env.DATABASE_URL) {
     throw new Error('TEST_DATABASE_URL must differ from DATABASE_URL');
   }
-  return { ...process.env, NODE_ENV: 'test', DATABASE_URL: testDatabaseUrl };
+  return {
+    ...process.env,
+    NODE_ENV: 'test',
+    DATABASE_URL: testDatabaseUrl,
+    // Synthetic test-only defaults so a bare CI environment can boot the app.
+    AUTH_SECRET: process.env.AUTH_SECRET ?? 'integration-test-secret-integration-test-secret',
+    API_PUBLIC_URL: process.env.API_PUBLIC_URL ?? 'http://localhost:4000',
+    WEB_ORIGIN: process.env.WEB_ORIGIN ?? 'http://localhost:3000',
+    DEV_MAILBOX_ENABLED: 'true',
+  };
 }

@@ -11,7 +11,11 @@
     "API_PORT",
     "API_HOST",
     "LOG_LEVEL",
-    "PLAYWRIGHT_BROWSERS_PATH"
+    "PLAYWRIGHT_BROWSERS_PATH",
+    "AUTH_SECRET",
+    "API_PUBLIC_URL",
+    "DEV_MAILBOX_ENABLED",
+    "TRUST_PROXY"
   ],
   "tasks": {
     "build": {

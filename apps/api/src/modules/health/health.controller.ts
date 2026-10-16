@@ -1,8 +1,11 @@
+import { SkipThrottle } from '@nestjs/throttler';
 import { Controller, Get, Header, HttpStatus, Res } from '@nestjs/common';
 import type { LivenessResponse, ReadinessResponse } from '@funfriday/contracts';
 import type { Response } from 'express';
 import { HealthService } from './health.service.js';
 
+/** Probes are polled constantly by orchestrators and must never be rate-limited. */
+@SkipThrottle()
 @Controller('health')
 export class HealthController {
   constructor(private readonly health: HealthService) {}

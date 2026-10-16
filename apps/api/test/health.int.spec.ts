@@ -73,6 +73,22 @@ describe('health endpoints against real Postgres + Redis', () => {
     expect(denied.headers['access-control-allow-origin']).toBeUndefined();
   });
 
+  it('answers malformed and oversized JSON with the standard envelope (400 / 413, not 500)', async () => {
+    const malformed = await request(app.getHttpServer())
+      .post('/api/v1/organizations')
+      .set('Content-Type', 'application/json')
+      .send('{"name": oops');
+    expect(malformed.status).toBe(400);
+    expect(apiErrorSchema.parse(malformed.body).code).toBe('BAD_REQUEST');
+
+    const oversized = await request(app.getHttpServer())
+      .post('/api/v1/organizations')
+      .set('Content-Type', 'application/json')
+      .send(JSON.stringify({ name: 'x'.repeat(200_000) }));
+    expect(oversized.status).toBe(413);
+    expect(apiErrorSchema.parse(oversized.body).code).toBe('BAD_REQUEST');
+  });
+
   it('does not serve routes outside the /api/v1 prefix', async () => {
     await request(app.getHttpServer()).get('/health/live').expect(404);
   });

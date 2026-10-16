@@ -7,7 +7,8 @@ import { resolveTestEnv } from './test-env.js';
 export async function startApp(
   overrides: Partial<AppConfig> = {},
 ): Promise<NestExpressApplication> {
-  const config = { ...parseConfig(resolveTestEnv()), ...overrides };
+  // one trusted proxy hop lets each test agent present its own X-Forwarded-For so per-IP limits stay isolated.
+  const config = { ...parseConfig(resolveTestEnv()), trustProxy: 1, ...overrides };
   const app = await createApp(config, { logger: false });
   await app.init();
   return app;

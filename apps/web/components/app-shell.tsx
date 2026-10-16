@@ -1,11 +1,22 @@
 'use client';
 
-import { CalendarPlus, Library, LayoutDashboard, type LucideIcon } from 'lucide-react';
+import {
+  CalendarPlus,
+  History,
+  Library,
+  LayoutDashboard,
+  UsersRound,
+  UserRoundCog,
+  type LucideIcon,
+} from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import { type ReactNode, useEffect, useRef } from 'react';
-import { Notice, buttonStyles } from '@funfriday/ui';
+import { buttonStyles } from '@funfriday/ui';
+import { canViewAudit } from '@/lib/roles';
 import { LogoMark } from './brand-art';
+import { SessionGate, SessionProvider, useCurrentMembership } from './session-provider';
 import { GuardedLink, UnsavedGuardProvider } from './unsaved-guard';
+import { UserMenu } from './user-menu';
 
 interface NavItem {
   href: string;
@@ -30,47 +41,112 @@ const NAV: NavItem[] = [
   },
 ];
 
+const WORKSPACE_NAV: (NavItem & { adminOnly?: boolean })[] = [
+  {
+    href: '/app/settings/members',
+    label: 'Members',
+    icon: UsersRound,
+    match: (p) => p.startsWith('/app/settings/members'),
+  },
+  {
+    href: '/app/settings/teams',
+    label: 'Teams',
+    icon: UserRoundCog,
+    match: (p) => p.startsWith('/app/settings/teams'),
+  },
+  {
+    href: '/app/settings/audit',
+    label: 'Audit log',
+    icon: History,
+    match: (p) => p.startsWith('/app/settings/audit'),
+    adminOnly: true,
+  },
+];
+
 /** Mobile tab label is shorter: "Plan" (the Plan tab is the quick-create). */
 const SHORT: Record<string, string> = { 'Plan event': 'Plan' };
 
+function navLinkClass(active: boolean): string {
+  return [
+    'relative flex min-h-16 flex-col items-center justify-center gap-1 text-xs leading-4 md:min-h-16 md:rounded-ff-button',
+    'lg:min-h-12 lg:flex-row lg:justify-start lg:gap-3 lg:px-3 lg:text-base lg:leading-6',
+    active
+      ? 'bg-ff-violet-50 font-bold text-ff-violet-700'
+      : 'font-semibold text-ff-ink hover:bg-ff-violet-50',
+    // Shape cue (not colour alone): 3px top bar on tabs, left bar on rail/sidebar.
+    active
+      ? 'before:absolute before:inset-x-0 before:top-0 before:h-[3px] before:bg-ff-violet-700 md:before:inset-x-auto md:before:top-2 md:before:left-0 md:before:h-[calc(100%-1rem)] md:before:w-[3px] md:before:rounded-full'
+      : '',
+  ].join(' ');
+}
+
 function PrimaryNav({ pathname }: { pathname: string }) {
+  const membership = useCurrentMembership();
+  const workspace = membership
+    ? WORKSPACE_NAV.filter((item) => !item.adminOnly || canViewAudit(membership.role))
+    : [];
   return (
-    <nav aria-label="Primary" className="md:flex-1 md:overflow-y-auto">
-      <ul className="grid grid-cols-3 md:flex md:flex-col md:gap-1 md:px-2 md:py-2 lg:px-4">
-        {NAV.map(({ href, label, icon: Icon, match }) => {
-          const active = match(pathname);
-          return (
-            <li key={href}>
-              <GuardedLink
-                href={href}
-                aria-current={active ? 'page' : undefined}
-                className={[
-                  'relative flex min-h-16 flex-col items-center justify-center gap-1 text-xs leading-4 md:min-h-16 md:rounded-ff-button',
-                  'lg:min-h-12 lg:flex-row lg:justify-start lg:gap-3 lg:px-3 lg:text-base lg:leading-6',
-                  active
-                    ? 'bg-ff-violet-50 font-bold text-ff-violet-700'
-                    : 'font-semibold text-ff-ink hover:bg-ff-violet-50',
-                  // Shape cue (not colour alone): 3px top bar on tabs, left bar on rail/sidebar.
-                  active
-                    ? 'before:absolute before:inset-x-0 before:top-0 before:h-[3px] before:bg-ff-violet-700 md:before:inset-x-auto md:before:top-2 md:before:left-0 md:before:h-[calc(100%-1rem)] md:before:w-[3px] md:before:rounded-full'
-                    : '',
-                ].join(' ')}
-              >
-                <Icon aria-hidden="true" className="size-6 shrink-0" />
-                <span>
-                  <span className="md:hidden">{SHORT[label] ?? label}</span>
-                  <span className="hidden md:inline">{label}</span>
-                </span>
-              </GuardedLink>
-            </li>
-          );
-        })}
-      </ul>
-    </nav>
+    <div className="md:flex-1 md:overflow-y-auto">
+      <nav aria-label="Primary">
+        <ul className="grid grid-cols-3 md:flex md:flex-col md:gap-1 md:px-2 md:py-2 lg:px-4">
+          {NAV.map(({ href, label, icon: Icon, match }) => {
+            const active = match(pathname);
+            return (
+              <li key={href}>
+                <GuardedLink
+                  href={href}
+                  aria-current={active ? 'page' : undefined}
+                  className={navLinkClass(active)}
+                >
+                  <Icon aria-hidden="true" className="size-6 shrink-0" />
+                  <span>
+                    <span className="md:hidden">{SHORT[label] ?? label}</span>
+                    <span className="hidden md:inline">{label}</span>
+                  </span>
+                </GuardedLink>
+              </li>
+            );
+          })}
+        </ul>
+      </nav>
+      {workspace.length > 0 && (
+        <nav aria-label="Workspace" className="hidden md:block">
+          <p className="mt-3 hidden px-7 text-xs font-semibold tracking-wide text-ff-muted uppercase lg:block">
+            Workspace
+          </p>
+          <hr className="mx-4 mt-2 border-ff-border lg:hidden" />
+          <ul className="flex flex-col gap-1 px-2 py-2 lg:px-4">
+            {workspace.map(({ href, label, icon: Icon, match }) => {
+              const active = match(pathname);
+              return (
+                <li key={href}>
+                  <GuardedLink
+                    href={href}
+                    aria-current={active ? 'page' : undefined}
+                    className={navLinkClass(active)}
+                  >
+                    <Icon aria-hidden="true" className="size-6 shrink-0" />
+                    <span>{label}</span>
+                  </GuardedLink>
+                </li>
+              );
+            })}
+          </ul>
+        </nav>
+      )}
+    </div>
   );
 }
 
 export function AppShell({ children }: { children: ReactNode }) {
+  return (
+    <SessionProvider>
+      <ShellFrame>{children}</ShellFrame>
+    </SessionProvider>
+  );
+}
+
+function ShellFrame({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const firstPath = useRef(true);
 
@@ -144,10 +220,8 @@ export function AppShell({ children }: { children: ReactNode }) {
             <PrimaryNav pathname={pathname} />
           </div>
 
-          <div className="hidden p-4 lg:block">
-            <Notice tone="info" title="Preview workspace">
-              Accounts arrive in a later phase. Anything you save stays on this device.
-            </Notice>
+          <div className="hidden border-t border-ff-border p-2 md:block lg:p-4">
+            <UserMenu placement="sidebar" />
           </div>
         </div>
 
@@ -156,8 +230,21 @@ export function AppShell({ children }: { children: ReactNode }) {
           tabIndex={-1}
           className="px-4 pt-6 pb-[88px] md:pl-[calc(6rem+1.5rem)] md:pr-6 md:pb-12 lg:pl-[calc(16.5rem+2rem)] lg:pr-8"
         >
+          <div className="mb-4 flex items-center justify-between md:hidden">
+            <GuardedLink
+              href="/app"
+              aria-label="FunFriday home"
+              className="flex min-h-11 items-center gap-2 rounded-ff-button"
+            >
+              <LogoMark className="h-7 w-10 shrink-0" />
+              <span className="font-heading text-lg font-extrabold tracking-tight text-ff-ink">
+                FunFriday
+              </span>
+            </GuardedLink>
+            <UserMenu placement="top" />
+          </div>
           <div key={pathname} className="ff-route mx-auto w-full max-w-6xl">
-            {children}
+            <SessionGate>{children}</SessionGate>
           </div>
         </main>
       </div>

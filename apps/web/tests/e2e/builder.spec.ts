@@ -1,4 +1,5 @@
-import { expect, test, type Page } from '@playwright/test';
+import type { Page } from '@playwright/test';
+import { expect, test } from './fixtures';
 import {
   expectNoHorizontalScroll,
   expectNoSeriousAxeViolations,
@@ -265,6 +266,8 @@ test.describe('event builder', () => {
       .click();
     await dialog.getByRole('button', { name: 'Save draft' }).click();
     await expect(page).toHaveURL(/\/app\/library/);
+    // Let the library screen finish loading before a full navigation interrupts it.
+    await expect(page.getByRole('heading', { level: 1, name: 'Activities' })).toBeVisible();
     await page.goto('/app');
     await expect(page.getByRole('heading', { level: 3, name: 'Guarded plan' })).toBeVisible();
     await page.getByRole('link', { name: 'Plan a FunFriday' }).first().click();
@@ -435,8 +438,9 @@ test.describe('event builder', () => {
         /^Remove Sketch & Guess/,
       ]) {
         const b = await playlist(page).getByRole('button', { name }).boundingBox();
-        expect(b?.height ?? 0).toBeGreaterThanOrEqual(44);
-        expect(b?.width ?? 0).toBeGreaterThanOrEqual(44);
+        // 44px target; allow sub-pixel layout rounding (43.99997 is 44).
+        expect(b?.height ?? 0).toBeGreaterThanOrEqual(43.9);
+        expect(b?.width ?? 0).toBeGreaterThanOrEqual(43.9);
       }
       // Actions sit below the content on narrow screens, right-aligned.
       const field = await page.getByLabel('Minutes for Sketch & Guess').boundingBox();

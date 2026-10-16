@@ -74,6 +74,26 @@
 | GET | `/api/v1/activities` | Public, read-only (global catalog) | `activityListResponseSchema` - display-ordered, `disabled` hidden, no ids/timestamps; `Cache-Control: public, max-age=60` (P1, D017) |
 | GET | `/api/v1/health/ready` | Public (restrict at ingress before public exposure) | `readinessResponseSchema` - 200 `ready` / 503 `not_ready`, per-dependency `up`/`down` + latency, no hostnames or errors |
 
+### Identity and tenancy (P2, ADR 0002)
+
+| Verb | Route | Access | Notes |
+| --- | --- | --- | --- |
+| * | `/api/v1/auth/*` | Public (Better Auth) | sign-up/email, sign-in/email (5/min), sign-out, get-session, send-verification-email, verify-email, update-user, revoke-other-sessions; library error shape `{code,message}` |
+| GET | `/api/v1/me` | Session | User + ACTIVE memberships; never joins anything (D026) |
+| POST | `/api/v1/invitations/preview` | Session | `{token}` -> org, role, emailMatches, alreadyMember; 404 unknown/used, 410 expired; 10/min |
+| POST | `/api/v1/invitations/accept` | Session | `{token}` -> joins; single use; 403 INVITE_EMAIL_MISMATCH, 409 already member, 410 expired; verifies the email; 10/min |
+| POST | `/api/v1/organizations` | Session | Creator becomes Admin |
+| GET | `/api/v1/organizations/:orgId` | Any member | |
+| GET / POST | `/api/v1/organizations/:orgId/members` | Any member / Admin | Emails Admin-only; POST creates INVITED + emails a one-time link (hash stored, 14-day expiry), enumeration-safe; 409 CONFLICT |
+| PATCH / DELETE | `/api/v1/organizations/:orgId/members/:memberId` | Admin | 409 LAST_ADMIN |
+| GET / POST | `/api/v1/organizations/:orgId/teams` | Any member / Admin, Host | 409 duplicate name |
+| DELETE | `/api/v1/organizations/:orgId/teams/:teamId` | Admin, Host | |
+| POST / DELETE | `/api/v1/organizations/:orgId/teams/:teamId/members[/:memberId]` | Admin, Host | ACTIVE same-org members only |
+| GET | `/api/v1/organizations/:orgId/audit?cursor=` | Admin | 50/page, newest first |
+| GET | `/api/v1/dev/mailbox` | Local only | Registered only when `DEV_MAILBOX_ENABLED=true`; refused in production |
+
+Cross-cutting: no session -> 401; non-member / unknown / malformed id -> 404; wrong role -> 403; state-changing requests carrying any cookie need an allow-listed `Origin` (403 otherwise); 300 req/min/IP (health exempt); malformed JSON 400, body over 100 kB 413 (auth routes: 64 KiB, chunked bodies 411); auth: sign-in/sign-up 5/min, send-verification-email 3/min; update-user accepts `name` only.
+
 Every response carries `x-request-id` (caller value kept only if `^[A-Za-z0-9._-]{1,64}$`).
 
 ## Ordering, dedupe and acks

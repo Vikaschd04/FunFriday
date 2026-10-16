@@ -10,7 +10,8 @@ export class PrismaService extends PrismaClient implements OnModuleDestroy {
       adapter: new PrismaPg({
         connectionString: config.databaseUrl,
         // Fail fast instead of hanging requests when Postgres is unreachable.
-        connectionTimeoutMillis: 2_000,
+        // Generous enough to survive a busy libuv pool (password hashing) without 500s.
+        connectionTimeoutMillis: 5_000,
         max: 10,
       }),
     });

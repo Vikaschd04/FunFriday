@@ -49,12 +49,12 @@ Some phases can overlap in design/prototyping; dependent implementation steps re
 - [x] Loading/empty/denied/error states; mobile and reduced-motion (denied state wired to real auth in P2).
 - [x] Screenshots 320px, tablet and desktop; accessibility walkthrough (automated + reviewer; manual SR pending).
 
-### P2 - Workspace & Auth [not started]
-- [ ] Auth/provider selection ADR, login/logout/secure session.
-- [ ] Organization, team and membership tables and migration.
-- [ ] Roles enforced for API and socket; tenant cross-access tests.
-- [ ] Secure guest identity design and token lifecycle.
-- [ ] Consent/retention model and audited privileged actions.
+### P2 - Workspace & Auth [GO - see docs/phases/P2_IDENTITY_TENANCY.md]
+- [x] Auth/provider selection ADR, login/logout/secure session (ADR 0002, Better Auth).
+- [x] Organization, team and membership tables and migration (+ invitation links, D026).
+- [x] Roles enforced for API (sockets: design in place, enforced in P4); tenant cross-access tests (70-case matrix).
+- [x] Secure guest identity design and token lifecycle (`docs/design/GUEST_IDENTITY.md`; implemented P3/P4).
+- [x] Consent/retention model and audited privileged actions (`docs/design/CONSENT_RETENTION.md`, audit log).
 
 ### P3 - Events & Invites [not started]
 - [ ] Activity library seeded manifests and detail pages.

@@ -27,6 +27,17 @@ Only add reproducible, cross-session knowledge that saves future work. No redund
 - 2026-10-15 | Safari/WebKit focus | Clicks don't focus buttons/links; Tab skips links by default | Store dialog triggers explicitly; WebKit tests focus skip link directly | `apps/web` dialogs + E2E
 - 2026-10-15 | Advisory says "patched >=X" but X isn't published | braces 3.0.4 doesn't exist | Verify the patched version exists before planning an override; otherwise document an exception with a review date | `pnpm-workspace.yaml`
 
+## P2 learnings (2026-10-15)
+
+- 2026-10-15 | Foreign-Origin sign-out returned 200 in tests | Better Auth silently disables its Origin/CSRF checks when `NODE_ENV=test` | Pin `advanced.disableOriginCheck/disableCSRFCheck: false`; test security controls under the same NODE_ENV as production | `apps/api/src/modules/auth/auth-options.ts`
+- 2026-10-15 | Oversized JSON returned 500 | body-parser errors are `http-errors`, not Nest exceptions | Map `expose: true` 4xx statuses in the error filter; never echo their message | `apps/api/src/common/errors/error-response.ts`
+- 2026-10-15 | Auth libraries ship telemetry | `@better-auth/telemetry` installed transitively | Disable telemetry explicitly and assert no outbound calls in tests | auth integration tests
+- 2026-10-15 | Rate limits keyed on X-Forwarded-For are spoofable | Default proxy trust lets clients pick their IP | `TRUST_PROXY=false` by default; auth reads an internal header overwritten from `req.ip` | `apps/api` config + middleware
+
+- 2026-10-16 | Flaky E2E "fields empty at submit" was patched by retyping in the test | Controlled inputs drop text typed before hydration; native pre-hydration submit is GET and leaked the password into the URL | Never paper over a flaky form test - reproduce by delaying JS chunks; auth forms are uncontrolled (FormData) with submit gated until hydration and `method="post"` | `apps/web/components/auth-forms.tsx`, `tests/e2e/hydration-safety.spec.ts`
+- 2026-10-16 | Intermittent pg "connection timeout" 500s under parallel sign-ups | scrypt hashing fills the 4-thread libuv pool that `localhost` DNS lookups for new connections also need | Cap concurrent hashing; raise connect timeout; reproduce under CPU contention | `apps/api/src/common/concurrency/limiter.ts`
+- 2026-10-16 | Invitation auto-claim by verified email | Verification proves inbox control only if the verifier also owns the account; pre-registered accounts break that | Join via a token sent to the inbox AND a session for that address | D026
+
 ## Follow-up template
 
 `YYYY-MM-DD | Trigger | Observed evidence | Reusable conclusion | Where applied`

@@ -29,6 +29,12 @@
 | D018 | Dependency security | `pnpm audit --audit-level high` gates CI; overrides mysql2 3.24.5 + deepmerge-ts 8.0.2 (Prisma CLI deps); braces GHSA-vfj7-8cjw-p6xm ignored (no patched release; lint-time only) | Re-check monthly; drop overrides when Prisma updates |
 | D019 | CI supply chain | Actions pinned to commit SHAs (checkout v7.0.1, setup-node v7.1.0, pnpm/action-setup v6.1.0, upload-artifact v7.0.2, setup-python v7.0.0); Dependabot for github-actions only | npm updates stay manual under pnpm 11 policies |
 | D020 | Web CSP | Baseline CSP + security headers in `next.config.ts`; script/style `'unsafe-inline'` until nonce-based CSP lands with P2 dynamic pages | Tracked P2 |
+| D021 | Auth provider | Better Auth 1.7.8 inside the API behind `AuthSessionPort`; email + password; DB sessions; telemetry disabled (ADR 0002) | Revisit before external pilot / SSO need |
+| D022 | Adding members | ~~Auto-claim at `/me` for a verified matching email~~ **Superseded by D026** (pre-hijack risk found in security review) | Enumeration-safe add-member response retained |
+| D023 | Tenant enforcement | Non-member -> 404, wrong role -> 403; all queries org-scoped; composite FKs keep team members inside their org | API + DB defence in depth |
+| D024 | Roles | Admin (members, roles, teams, audit, settings), Host (teams; events in P3), Participant (read); last Admin protected; emails Admin-only | `docs/phases/P2_IDENTITY_TENANCY.md` |
+| D025 | Nonce CSP | `apps/web/proxy.ts` issues per-request nonce CSP with 'strict-dynamic'; all pages dynamic; styles keep 'unsafe-inline' (style attributes) | Supersedes D020 for scripts |
+| D026 | Invitation acceptance | Adding a member emails a one-time link (32-byte token, hashed, single use, 14-day expiry). Joining requires that token **and** a session for an account whose email is the invited address; accepting verifies the email. `/me` never claims. | Security review 2026-10-15: attacker pre-registering a victim's email cannot claim (has password, not inbox); victim cannot be hijacked (has inbox, not password) |
 | D014 | Env loading | Single root `.env` (local only) loaded with `process.loadEnvFile`; real env always wins; Zod-validated, errors name keys never values | No dotenv dependency; production uses secret manager |
 
 ## Recorded ADRs

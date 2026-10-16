@@ -1,44 +1,42 @@
 # Project Status
 
-**As of:** 2026-10-15
-**Current phase:** P1 - Premium Design -> **GO for P2** (local + GitHub CI run 38773479161). P2 not started.
-**Build status:** All checks pass locally (249 unit, 16 integration, 135 E2E across Chromium/Firefox/WebKit). Code at github.com/Vikaschd04/FunFriday (`main`).
+**As of:** 2026-10-16
+**Current phase:** P2 - Identity, organisations and tenancy -> **GO for P3** (pending first CI run of this commit). P3 not started.
+**Build status:** All checks pass locally (320 unit, 158 integration, 207 E2E across Chromium/Firefox/WebKit). Code at github.com/Vikaschd04/FunFriday (`main`).
 
 ## What works now (try it: `docs/LOCAL_TESTING.md`)
 
-- Landing page, system status page, 404/error/loading states.
-- App shell (sidebar / tablet rail / mobile tab bar), dashboard with drafts **saved on this device only**.
-- Activity library on real API data (`GET /api/v1/activities`) with search, filters, URL-synced state.
-- Event planner: Basics -> Participants -> Activities -> Review, DST-aware times, runtime meter, keyboard reorder, draft save/restore/delete.
-- Design system in `packages/ui` (tokens + accessible components, 133 tests); shared contracts for activities, event drafts and time zones.
+- Sign-up / sign-in / sign-out with secure cookie sessions; local **dev mailbox** instead of email.
+- Organisations with Admin / Host / Participant roles, teams, audit log; members join via **one-time invitation links** (D026).
+- Tenant isolation enforced by API guards (404/403) and database composite keys; nonce-based CSP.
+- From P1: landing, dashboard, activity library on real data, event planner with drafts saved on this device.
 
 ## Next tasks
 
-1. **Deployment stays deferred (D009):** the owner wanted local testing until there is something usable on the UI - P1 is the first such build. Owner to try `docs/LOCAL_TESTING.md`, then decide whether to raise the deployment ADR now or after more phases.
-2. Start P2 (auth, organisations, roles, tenant isolation) via `/start-phase P2` - needs an auth-provider ADR first (managed OIDC vs Auth.js).
-3. Carry the P1 follow-ups below.
+1. **Deployment stays deferred (D009).** Owner to try the two-person flow in `docs/LOCAL_TESTING.md` section 3a.
+2. Start P3 (events + invitations): server-saved events (replacing device drafts), RSVP, ICS export, email adapter (keeping the dev mailbox), password reset, invitation resend.
+3. Carry the follow-ups below.
 
 ## Open follow-ups
 
-- Security (P2): nonce-based CSP; rate limiting before org-specific content; CSRF with cookie sessions; readiness probe cache/rate limit before any public deploy; structured logging with redaction.
+- Security: sign-up account enumeration (library behaviour, rate limited); shared rate-limit storage before scaling; structured logging with redaction; readiness probe limits before any public deploy.
+- Product: password reset; invitation resend/revoke; leave organisation; delete account (before pilot).
 - A11y manual passes: VoiceOver/NVDA, real 200-400% zoom, Windows forced colours, real Safari.
-- UX: unsaved-draft guard on browser Back; `error.tsx` E2E; design nice-to-haves (see P1 gate report).
 - Dependency hygiene: audit exception review 2026-11-15; drop overrides/release-age exclusions once upstream catches up.
 
 ## Blockers and risks
 
-- None blocking. Disk on the dev machine is tight (~8 GB free); keep >= 4 GB.
-- Drafts in browser storage are intentionally temporary until P3 persistence; the UI says so everywhere.
-- Brand/trademark unverified; participant caps remain design targets until P4/P8 load tests.
+- None blocking. Dev machine disk is tight (~8 GB free); keep >= 4 GB.
+- Better Auth is young (v1 since 2024-11); ADR 0002 keeps it behind `AuthSessionPort` so it can be replaced.
 
 ## Last test evidence
 
-`docs/phases/P1_DESIGN_SYSTEM.md` -> Gate report (2026-10-15 22:24-22:27 IST, cache disabled). GitHub CI P1: run 38773479161 (18/18 steps, 3 browsers). P0 evidence: `docs/phases/P0_FOUNDATION.md`; P0 CI run 38758446713.
+`docs/phases/P2_IDENTITY_TENANCY.md` -> Gate report (2026-10-16 10:47-10:52 IST, cache disabled). Earlier: P1 CI run 38773479161, P0 CI run 38758446713.
 
 ## Local environment notes
 
-Docker via Colima (`colima start`). `pnpm db:up` / `pnpm db:down`. Ports 3000 web, 4000 API, 5432, 6379 on 127.0.0.1. Playwright browsers: Chromium, Firefox, WebKit installed.
+Docker via Colima (`colima start`). `pnpm db:up` / `pnpm db:down`; `pnpm db:migrate` after pulling (P2 added two migrations). Local `.env` needs `AUTH_SECRET` (random), `API_PUBLIC_URL`, `DEV_MAILBOX_ENABLED=true` - see `.env.example`. Ports 3000 web, 4000 API, 5432, 6379 on 127.0.0.1.
 
 ## Handoff
 
-On resume: read `CLAUDE.md`, this file, `docs/phases/P1_DESIGN_SYSTEM.md`, then `docs/ROADMAP.md` P2. Do not start P2 until the owner has reviewed P1 locally.
+On resume: read `CLAUDE.md`, this file, `docs/phases/P2_IDENTITY_TENANCY.md`, `docs/ADRs/0002-authentication-and-tenancy.md`, then `docs/ROADMAP.md` P3.

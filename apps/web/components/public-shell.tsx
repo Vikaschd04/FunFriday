@@ -5,7 +5,7 @@ import { AppLinkButton } from './app-link-button';
 
 export function PublicHeader() {
   return (
-    <header className="mx-auto flex w-full max-w-6xl items-center justify-between gap-3 px-4 py-4 md:px-6 lg:px-8">
+    <header className="mx-auto flex w-full max-w-6xl items-center justify-between gap-2 px-3 py-4 sm:px-4 md:px-6 lg:px-8">
       <Link
         href="/"
         className="inline-flex min-h-11 items-center gap-2 rounded-ff-button md:gap-3"
@@ -16,19 +16,28 @@ export function PublicHeader() {
           FunFriday
         </span>
       </Link>
-      <nav aria-label="Main" className="flex items-center gap-2">
+      <nav aria-label="Main" className="flex items-center gap-1 sm:gap-2">
         <Link
           href="/app/library"
           className="hidden min-h-11 items-center rounded-ff-button px-3 font-semibold text-ff-violet-700 hover:bg-ff-violet-50 sm:inline-flex"
         >
           Activities
         </Link>
+        <Link
+          href="/sign-in"
+          className="inline-flex min-h-11 items-center rounded-ff-button px-2 text-sm font-semibold whitespace-nowrap text-ff-violet-700 hover:bg-ff-violet-50 sm:px-3 sm:text-base"
+        >
+          Sign in
+        </Link>
         <AppLinkButton
           href="/app/events/new"
           size="md"
           className="px-3! text-sm! whitespace-nowrap sm:px-5! sm:text-base!"
         >
-          Plan a FunFriday
+          <span aria-hidden="true" className="sm:hidden">
+            Plan
+          </span>
+          <span className="sr-only sm:not-sr-only">Plan a FunFriday</span>
         </AppLinkButton>
       </nav>
     </header>

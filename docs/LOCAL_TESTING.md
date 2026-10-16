@@ -26,9 +26,29 @@ pnpm dev              # web http://localhost:3000 · API http://localhost:4000/a
 
 Stop with `Ctrl+C`, then `pnpm db:down` (and `colima stop`) when you are done.
 
-## 3. What to try (P1 build)
+## 3. What to try
 
-Everything below runs on real data from your local API. Nothing is sent, shared or emailed; event plans are saved **in your browser only**.
+### 3a. Accounts and organisations (P2)
+
+No real email is sent. Verification messages land in a local **dev mailbox** at `http://localhost:3000/dev/mailbox` (only when `DEV_MAILBOX_ENABLED=true`, which `.env.example` sets for local use).
+
+| Try this | You should see |
+| --- | --- |
+| `/sign-up` with your name, any email (e.g. `ana@example.test`) and a 12+ character password | You land in the app, signed in, with a "verify your email" notice |
+| Open `/dev/mailbox` and use the verification link | `/app?verified=1` with a success message |
+| Create your organisation | You become its Admin; Members, Teams and Audit log appear |
+| Members -> Add member `sam@example.test` as Participant | "Invitation sent to sam@example.test. They'll join after accepting it." (same message whether or not the account exists) |
+| **Second person:** open a private/incognito window (or another browser), open `/dev/mailbox`, use the invitation link, create an account as `sam@example.test` and press Join | Sam now sees your organisation, read-only, with no email addresses and no Audit log. Accepting the invitation also verifies Sam's email |
+| Open the same invitation link again | "This invitation link isn't valid or has already been used." |
+| Back as Admin: change Sam's role to Host | Sam can now create teams; the change appears in the Audit log |
+| As Admin, try to demote yourself while you're the only Admin | A clear "at least one admin" message; nothing changes |
+| Sign out, then open `/app` | You're sent to sign-in, and returned to the page you wanted afterwards |
+
+Two windows in the same normal browser profile share one session; use a private window or a different browser for the second person.
+
+### 3b. Planning (P1)
+
+Everything below runs on real data from your local API. Event plans are still saved **in your browser only** (server-saved events arrive in P3).
 
 | Where | Try this | You should see |
 | --- | --- | --- |
@@ -45,11 +65,12 @@ Everything below runs on real data from your local API. Nothing is sent, shared 
 | Phone size | Browser dev tools at 320-390px wide | Bottom tab bar, no sideways scrolling |
 | Reduced motion | Turn on "Reduce motion" in your OS settings | Entrance animations and spinners stop |
 
-Not built yet (by design, later phases): sign-in, organisations, saving events to the server, invitations, joining with a code, live games.
+Not built yet (by design, later phases): password reset, real email delivery, saving events to the server, event invitations, joining with a code, live games.
 
 ## 4. Reset local data
 
 - Drafts: they live in this browser's local storage. Delete them from the dashboard, or clear site data for `localhost:3000`.
+- Accounts and organisations: they live in the local database; reset it as below to start over.
 - Database: `pnpm db:down`, then `docker volume rm funfriday-dev_postgres_data`, then repeat section 2. This deletes **only** FunFriday's local database.
 
 ## 5. Automated checks (same as CI)
@@ -70,3 +91,5 @@ pnpm test:load             # needs a running API (`pnpm --filter @funfriday/api 
 | Status page says "API unreachable" | Is `pnpm dev` running? Is port 4000 free (`lsof -i :4000`)? |
 | Integration tests complain about `TEST_DATABASE_URL` | Copy `.env.example` to `.env`; if your Postgres volume is older than the test database, see `docs/SETUP.md` |
 | Port 3000/4000 already in use | Stop the other process or the earlier `pnpm dev` |
+| API exits with `Invalid or missing environment variables: AUTH_SECRET` | Add `AUTH_SECRET` to `.env` (`openssl rand -base64 32`), see `.env.example` |
+| "Too many attempts" on sign-in/up | Auth is rate limited to 5 tries a minute per address; wait a minute |
