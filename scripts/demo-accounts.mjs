@@ -10,6 +10,12 @@
  */
 const API = (process.env.DEMO_API ?? 'http://localhost:4000').replace(/\/+$/, '');
 const WEB = (process.env.DEMO_WEB ?? 'http://localhost:3000').replace(/\/+$/, '');
+// The password below is public (this file is in a public repo): only ever create these
+// accounts on a local machine.
+if (!['localhost', '127.0.0.1', '[::1]'].includes(new URL(API).hostname)) {
+  console.error(`demo-accounts: refusing to run against ${API} - local machines only.`);
+  process.exit(1);
+}
 const PASSWORD = 'FunFriday-Demo-2026';
 const ORG_NAME = 'Acme Demo (fictional)';
 
