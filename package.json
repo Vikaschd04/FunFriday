@@ -23,7 +23,8 @@
     "db:down": "sh scripts/compose.sh down",
     "db:migrate": "pnpm --filter @funfriday/api db:migrate",
     "db:seed": "pnpm --filter @funfriday/api db:seed",
-    "validate:kit": "python3 scripts/validate_pack.py"
+    "validate:kit": "python3 scripts/validate_pack.py",
+    "demo:accounts": "node scripts/demo-accounts.mjs"
   },
   "devDependencies": {
     "prettier": "3.9.10",

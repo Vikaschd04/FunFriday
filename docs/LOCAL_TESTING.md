@@ -26,6 +26,20 @@ pnpm dev              # web http://localhost:3000 · API http://localhost:4000/a
 
 Stop with `Ctrl+C`, then `pnpm db:down` (and `colima stop`) when you are done.
 
+## 2b. Ready-made demo accounts (optional)
+
+With `pnpm dev` running: `pnpm demo:accounts`. It creates (or reuses) five **local, fictional** accounts in one organisation, "Acme Demo (fictional)", through the real sign-up and invitation flow:
+
+| Role | Name | Email |
+| --- | --- | --- |
+| Admin | Ava Admin | `ava.admin@funfriday.test` |
+| Host | Hugo Host | `hugo.host@funfriday.test` |
+| Participant | Pia Player | `pia.player@funfriday.test` |
+| Participant | Pat Player | `pat.player@funfriday.test` |
+| Participant | Priya Player | `priya.player@funfriday.test` |
+
+Password for all of them: `FunFriday-Demo-2026` (local demo only - never reuse it for anything real). Sign in as different people in different browsers or private windows. Re-run the command after resetting the database.
+
 ## 3. What to try
 
 ### 3a. Accounts and organisations (P2)
